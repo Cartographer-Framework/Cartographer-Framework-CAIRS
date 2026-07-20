@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mitigations Library — Cartographer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f4f0e8; color: #1a1916; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.55; background-image: radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%), radial-gradient(circle at 90% 110%, rgba(0,0,0,0.025), transparent 50%); }
+  .page-bar { position: sticky; top: 0; z-index: 200; background: rgba(244,240,232,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid #d6cfbf; padding: 0 28px; height: 48px; display: flex; align-items: center; gap: 14px; }
+  .back-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #6b655a; text-decoration: none; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid #d6cfbf; background: transparent; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+  .back-btn:hover { color: #1a1916; border-color: #1a1916; background: rgba(26,25,22,0.04); }
+  .page-bar-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #948c7d; }
+
+  /* Original CSS from _mitInjectCss() */
+  #s-mitigations{ --mit-paper:#f4f0e8; --mit-paper-2:#ebe6dc; --mit-paper-3:#e3ddd0; --mit-ink:#1a1916; --mit-ink-2:#3a352d; --mit-ink-3:#6b655a; --mit-ink-4:#948c7d; --mit-rule:#d6cfbf; --mit-rule-soft:#e0d9c8; --mit-accent:oklch(0.55 0.06 195); --mit-shadow-card:0 1px 0 rgba(26,25,22,0.04), 0 24px 48px -28px rgba(26,25,22,0.18), 0 4px 12px -4px rgba(26,25,22,0.06); --mit-r-lg:14px; --mit-r-md:10px; background:var(--mit-paper); color:var(--mit-ink); font-family:'IBM Plex Sans', system-ui, sans-serif; font-size:15px; line-height:1.55; background-image:radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%), radial-gradient(circle at 90% 110%, rgba(0,0,0,0.025), transparent 50%); }
+  #s-mitigations, #s-mitigations *{ box-sizing:border-box; }
+  #s-mitigations .mit-shell{ max-width:1280px; margin:0 auto; padding:56px 48px 96px; }
+  #s-mitigations .mit-loading{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--mit-ink-3); padding:80px 0; text-align:center; line-height:1.8; }
+  #s-mitigations .mit-topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; }
+  #s-mitigations .mit-brandmark{ display:flex; align-items:center; gap:12px; }
+  #s-mitigations .mit-dot{ width:10px; height:10px; border-radius:50%; background:var(--mit-accent); box-shadow:0 0 0 4px color-mix(in oklch, var(--mit-accent), transparent 80%); }
+  #s-mitigations .mit-label, #s-mitigations .mit-crumbs{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--mit-ink-3); }
+  #s-mitigations .mit-crumbs .mit-sep{ margin:0 8px; opacity:0.5; }
+  #s-mitigations .mit-crumbs .mit-now{ color:var(--mit-ink-2); }
+  #s-mitigations .mit-title-block{ display:grid; grid-template-columns:1fr auto; gap:32px; align-items:end; padding-bottom:28px; border-bottom:1px solid var(--mit-rule); margin-bottom:32px; }
+  #s-mitigations .mit-display{ font-family:'Instrument Serif', Georgia, serif; font-weight:400; font-size:64px; line-height:0.95; letter-spacing:-0.01em; margin:0 0 14px; }
+  #s-mitigations .mit-display em{ font-style:italic; color:var(--mit-ink-2); }
+  #s-mitigations .mit-lede{ max-width:56ch; color:var(--mit-ink-2); font-size:16px; line-height:1.6; margin:0; }
+  #s-mitigations .mit-meta{ text-align:right; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--mit-ink-3); line-height:1.8; }
+  #s-mitigations .mit-num{ font-family:'Instrument Serif', Georgia, serif; font-size:40px; color:var(--mit-ink); letter-spacing:0; text-transform:none; display:block; line-height:1; margin-bottom:4px; }
+  #s-mitigations .mit-selector-wrap{ display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:28px; padding:18px 22px; background:var(--mit-paper-2); border:1px solid var(--mit-rule); border-radius:var(--mit-r-lg); }
+  #s-mitigations .mit-label-col{ display:flex; flex-direction:column; gap:6px; flex:1; min-width:280px; }
+  #s-mitigations .mit-sel-eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--mit-ink-3); }
+  #s-mitigations .mit-sel-row{ display:flex; gap:8px; align-items:stretch; }
+  #s-mitigations select#mit-select, #s-mitigations input#mit-search{ font-family:'IBM Plex Sans', sans-serif; font-size:14px; padding:10px 14px; border:1px solid var(--mit-rule); border-radius:8px; background:var(--mit-paper); color:var(--mit-ink); flex:1; min-width:0; }
+  #s-mitigations select#mit-select{ appearance:none; background-image:linear-gradient(45deg, transparent 50%, var(--mit-ink-3) 50%), linear-gradient(135deg, var(--mit-ink-3) 50%, transparent 50%); background-position:calc(100% - 16px) center, calc(100% - 11px) center; background-size:5px 5px, 5px 5px; background-repeat:no-repeat; padding-right:32px; cursor:pointer; }
+  #s-mitigations select#mit-select:focus, #s-mitigations input#mit-search:focus{ outline:none; border-color:var(--mit-ink); }
+  #s-mitigations input#mit-search{ max-width:280px; }
+  #s-mitigations .mit-sel-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--mit-ink-3); align-self:center; white-space:nowrap; }
+  #s-mitigations .mit-step-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:18px; }
+  #s-mitigations .mit-step-num{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--mit-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-mitigations .mit-step-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; }
+  #s-mitigations .mit-step-hint{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--mit-ink-4); letter-spacing:0.08em; text-transform:uppercase; }
+  #s-mitigations .mit-stage{ position:relative; display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, 1fr); gap:24px; align-items:start; }
+  #s-mitigations .mit-panel{ background:#fbf8f1; border:1px solid var(--mit-rule); border-radius:var(--mit-r-lg); box-shadow:var(--mit-shadow-card); overflow:hidden; }
+  #s-mitigations .mit-graph-panel{ display:flex; flex-direction:column; height:720px; position:sticky; top:24px; }
+  #s-mitigations .mit-graph-head{ padding:22px 26px 16px; border-bottom:1px solid var(--mit-rule-soft); display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  #s-mitigations .mit-gh-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; line-height:1.1; margin:0; }
+  #s-mitigations .mit-gh-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--mit-ink-3); }
+  #s-mitigations .mit-graph-wrap{ flex:1; position:relative; }
+  #s-mitigations .mit-graph-svg{ width:100%; height:100%; display:block; }
+  #s-mitigations .mit-ring{ fill:none; stroke:var(--mit-rule); stroke-dasharray:2 4; }
+  #s-mitigations .mit-node-link{ stroke:var(--mit-rule); stroke-width:1; fill:none; transition:stroke 0.25s, stroke-width 0.25s; }
+  #s-mitigations .mit-node-link.is-active{ stroke:var(--mit-ink); stroke-width:1.6; }
+  #s-mitigations .mit-leaf-circle{ fill:var(--mit-paper); stroke:var(--mit-ink-3); stroke-width:1; transition:fill 0.2s, stroke 0.2s; }
+  #s-mitigations .mit-leaf-group{ cursor:pointer; }
+  #s-mitigations .mit-leaf-group:hover .mit-leaf-circle{ fill:#f7f3eb; stroke:var(--mit-ink); }
+  #s-mitigations .mit-leaf-group.is-active .mit-leaf-circle{ fill:var(--mit-ink); stroke:var(--mit-ink); }
+  #s-mitigations .mit-leaf-group.is-active .mit-leaf-id{ fill:var(--mit-paper); }
+  #s-mitigations .mit-leaf-group.is-active .mit-leaf-name{ fill:var(--mit-ink); font-weight:500; }
+  #s-mitigations .mit-leaf-id{ font-family:'IBM Plex Mono', monospace; font-size:9px; fill:var(--mit-ink-2); text-anchor:middle; dominant-baseline:central; letter-spacing:0.04em; pointer-events:none; }
+  #s-mitigations .mit-leaf-name{ font-family:'IBM Plex Sans', sans-serif; font-size:10.5px; fill:var(--mit-ink-3); text-anchor:middle; pointer-events:none; }
+  #s-mitigations .mit-center-circle{ fill:var(--mit-ink); stroke:var(--mit-ink); }
+  #s-mitigations .mit-center-id, #s-mitigations .mit-center-name{ text-anchor:middle; pointer-events:none; fill:var(--mit-paper); }
+  #s-mitigations .mit-center-id{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; opacity:0.65; }
+  #s-mitigations .mit-center-name{ font-family:'Instrument Serif', Georgia, serif; font-size:17px; }
+  #s-mitigations .mit-empty-state{ padding:40px; text-align:center; color:var(--mit-ink-4); font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; line-height:1.6; }
+  #s-mitigations .mit-cards-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; align-content:start; }
+  #s-mitigations .mit-tcard{ background:#fbf8f1; border:1px solid var(--mit-rule); border-radius:var(--mit-r-md); padding:14px 16px; cursor:pointer; transition:border-color 0.18s, background 0.18s, transform 0.18s, box-shadow 0.25s; display:flex; flex-direction:column; gap:6px; min-height:88px; }
+  #s-mitigations .mit-tcard:hover{ border-color:var(--mit-ink-3); background:#fdfaf3; }
+  #s-mitigations .mit-tcard .mit-tc-id{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.12em; color:var(--mit-ink-3); text-transform:uppercase; }
+  #s-mitigations .mit-tcard .mit-tc-name{ font-family:'Instrument Serif', Georgia, serif; font-size:17px; line-height:1.2; color:var(--mit-ink); text-wrap:pretty; }
+  #s-mitigations .mit-tcard.mit-focused{ grid-column:1/-1; background:#fbf8f1; color:var(--mit-ink); border:1px solid var(--mit-ink); box-shadow:0 1px 0 rgba(26,25,22,0.04), 0 24px 48px -28px rgba(26,25,22,0.22), 0 4px 12px -4px rgba(26,25,22,0.08); cursor:default; padding:0; min-height:0; overflow:hidden; }
+  #s-mitigations .mit-tcard.mit-focused .mit-focused-head{ padding:22px 26px 16px; border-bottom:1px solid var(--mit-rule-soft); background:linear-gradient(180deg, #fdfaf3, #fbf8f1); }
+  #s-mitigations .mit-tcard.mit-focused .mit-info-eyebrow{ display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  #s-mitigations .mit-tcard.mit-focused .mit-info-title{ font-family:'Instrument Serif', Georgia, serif; font-size:26px; line-height:1.1; letter-spacing:-0.005em; margin:0; color:var(--mit-ink); }
+  #s-mitigations .mit-tcard.mit-focused .mit-focused-body{ padding:18px 26px 20px; }
+  #s-mitigations .mit-tcard.mit-focused .mit-sec-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--mit-ink-3); margin-bottom:10px; }
+  #s-mitigations .mit-tcard.mit-focused .mit-sec-body{ color:var(--mit-ink-2); font-size:14px; line-height:1.6; }
+  #s-mitigations .mit-tcard.mit-focused .mit-sec-body p{ margin:0 0 8px; }
+  #s-mitigations .mit-tcard.mit-focused .mit-sec-body p:last-child{ margin-bottom:0; }
+  #s-mitigations .mit-tcard.mit-focused .mit-focused-foot{ border-top:1px solid var(--mit-rule-soft); padding:10px 26px; display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--mit-paper-2); }
+  #s-mitigations .mit-tcard.mit-focused .mit-meta-line{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--mit-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-mitigations .mit-tcard.mit-focused .mit-close-btn{ background:var(--mit-paper); border:1px solid var(--mit-rule); border-radius:999px; padding:6px 12px; font:500 10px/1 'IBM Plex Sans', sans-serif; letter-spacing:0.08em; text-transform:uppercase; color:var(--mit-ink-2); cursor:pointer; }
+  #s-mitigations .mit-tcard.mit-focused .mit-close-btn:hover{ background:var(--mit-ink); color:var(--mit-paper); border-color:var(--mit-ink); }
+  #s-mitigations .mit-pill{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--mit-ink-3); padding:4px 10px; border:1px solid var(--mit-rule); border-radius:999px; background:var(--mit-paper); }
+  #s-mitigations .mit-pill .mit-pdot{ width:6px; height:6px; border-radius:50%; background:var(--mit-accent); }
+  #s-mitigations .mit-pill.mit-id-pill{ background:var(--mit-ink); color:var(--mit-paper); border-color:var(--mit-ink); }
+  #s-mitigations ul.mit-bullets{ list-style:none; padding:0; margin:0; counter-reset:mitli; }
+  #s-mitigations ul.mit-bullets li{ position:relative; padding:10px 0 10px 26px; border-top:1px solid var(--mit-rule-soft); color:var(--mit-ink-2); font-size:14px; line-height:1.55; }
+  #s-mitigations ul.mit-bullets li:first-child{ border-top:none; padding-top:4px; }
+  #s-mitigations ul.mit-bullets li::before{ content:counter(mitli, decimal-leading-zero); counter-increment:mitli; position:absolute; left:0; top:12px; font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--mit-ink-4); letter-spacing:0.08em; }
+  #s-mitigations ul.mit-bullets li:first-child::before{ top:6px; }
+  #s-mitigations .mit-fade-in{ animation:mitFadeUp 0.4s 0.02s both ease-out; }
+  @keyframes mitFadeUp{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:translateY(0); } }
+  @media(max-width:980px){ #s-mitigations .mit-shell{ padding:32px 20px 60px; } #s-mitigations .mit-display{ font-size:44px; } #s-mitigations .mit-stage{ grid-template-columns:1fr; } #s-mitigations .mit-graph-panel{ height:540px; position:static; } #s-mitigations .mit-cards-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="page-bar">
+  <a href="index.html" class="back-btn">← Showcase</a>
+  <span class="page-bar-title">Mitigations Library · ATLAS v4.0</span>
+</div>
+
+<div id="s-mitigations">
+  <div class="mit-shell">
+    <div id="mitigations-root"></div>
+  </div>
+</div>
+
+<script>
+// Subtechnique name fallback (same map as dashboard.js _MIT_FALLBACK_NAMES)
+const _MIT_FALLBACK_NAMES = {"AML.T0002.000":"Acquire Public AI Artifacts: Datasets","AML.T0002.001":"Acquire Public AI Artifacts: Models","AML.T0005":"Create Proxy AI Model","AML.T0005.000":"Create Proxy AI Model: Train Proxy via Gathered AI Artifacts","AML.T0005.001":"Create Proxy AI Model: Train Proxy via Replication","AML.T0005.002":"Create Proxy AI Model: Use Pre-Trained Model","AML.T0007":"Discover AI Artifacts","AML.T0010.001":"AI Supply Chain Compromise: AI Software","AML.T0010.002":"AI Supply Chain Compromise: Data","AML.T0010.003":"AI Supply Chain Compromise: Model","AML.T0011.000":"User Execution: Unsafe AI Artifacts","AML.T0011.001":"User Execution: Malicious Package","AML.T0018.000":"Manipulate AI Model: Poison AI Model","AML.T0018.001":"Manipulate AI Model: Modify AI Model Architecture","AML.T0018.002":"Manipulate AI Model: Embed Malware","AML.T0024.000":"Exfiltration via AI Inference API: Infer Training Data Membership","AML.T0024.001":"Exfiltration via AI Inference API: Invert AI Model","AML.T0024.002":"Exfiltration via AI Inference API: Extract AI Model","AML.T0034":"Cost Harvesting","AML.T0035":"AI Artifact Collection","AML.T0043.000":"Craft Adversarial Data: White-Box Optimization","AML.T0043.001":"Craft Adversarial Data: Black-Box Optimization","AML.T0043.002":"Craft Adversarial Data: Black-Box Transfer","AML.T0043.003":"Craft Adversarial Data: Manual Modification","AML.T0043.004":"Craft Adversarial Data: Insert Backdoor Trigger","AML.T0048.004":"External Harms: AI Intellectual Property Theft","AML.T0051.000":"LLM Prompt Injection: Direct","AML.T0051.001":"LLM Prompt Injection: Indirect","AML.T0051.002":"LLM Prompt Injection: Triggered","AML.T0052.000":"Phishing: Spearphishing via Social Engineering LLM","AML.T0059":"Erode Dataset Integrity","AML.T0061":"LLM Prompt Self-Replication","AML.T0062":"Discover LLM Hallucinations","AML.T0063":"Discover AI Model Outputs","AML.T0080":"AI Agent Context Poisoning","AML.T0080.000":"AI Agent Context Poisoning: Memory","AML.T0082":"RAG Credential Harvesting","AML.T0085":"Data from AI Services","AML.T0085.000":"Data from AI Services: RAG Databases","AML.T0085.001":"Data from AI Services: AI Agent Tools","AML.T0086":"Exfiltration via AI Agent Tool Invocation","AML.T0088":"Generate Deepfakes","AML.T0098":"AI Agent Tool Credential Harvesting","AML.T0101":"Data Destruction via AI Agent Tool Invocation"};
+
+const _mitigations = { list:[], techNames:{}, currentMitIdx:null, currentTechIdx:null, filter:'', _leafEls:[], _linkEls:[], _kbBound:false };
+
+function _mitEscape(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function _mitWrapText(str,maxChars,maxLines=2){ const words=String(str).split(/\s+/); const lines=[]; let cur=''; for(const w of words){ if((cur+' '+w).trim().length>maxChars){ if(cur)lines.push(cur); cur=w; }else{ cur=(cur+' '+w).trim(); } } if(cur)lines.push(cur); return lines.slice(0,maxLines); }
+function _mitTechName(id){ return _mitigations.techNames[id]||'(unknown technique)'; }
+
+async function init(){
+  const root=document.getElementById('mitigations-root');
+  root.innerHTML='<div class="mit-loading">Loading mitigations library…</div>';
+  try{
+    const [mitR,ttpR]=await Promise.all([fetch('./data/atlas_mitigations.json'),fetch('./data/atlas_ttp.json')]);
+    const mitJson=mitR.ok?await mitR.json():null;
+    const ttpJson=ttpR.ok?await ttpR.json():null;
+    _mitigations.list=(mitJson&&Array.isArray(mitJson.mitigations))?mitJson.mitigations:[];
+    const names=Object.assign({},_MIT_FALLBACK_NAMES);
+    if(ttpJson&&Array.isArray(ttpJson.tactics)){ for(const tac of ttpJson.tactics){ for(const tech of(tac.techniques||[])){ if(tech.techniqueId&&tech.name)names[tech.techniqueId]=tech.name; for(const sub of(tech.subtechniques||[])){ if(sub.techniqueId&&sub.name)names[sub.techniqueId]=sub.name; } } } }
+    _mitigations.techNames=names;
+  }catch(e){
+    root.innerHTML=`<div class="mit-loading">Could not load <code>data/atlas_mitigations.json</code> or <code>data/atlas_ttp.json</code>.<br>Add both files to the <code>/data/</code> folder and redeploy.<br><small style="opacity:0.6">${e.message}</small></div>`;
+    return;
+  }
+  if(!_mitigations.list.length){ root.innerHTML='<div class="mit-loading">No mitigations found in data file.</div>'; return; }
+  _render();
+  _selectMitigation(0);
+}
+
+function _render(){
+  const n=_mitigations.list.length;
+  document.getElementById('mitigations-root').innerHTML=`
+    <div class="mit-topbar">
+      <div class="mit-brandmark"><span class="mit-dot"></span><span class="mit-label">AI/LLM Threat Library · ATLAS Mitigations</span></div>
+      <div class="mit-crumbs"><span>Library</span><span class="mit-sep">/</span><span>ATLAS</span><span class="mit-sep">/</span><span class="mit-now">Mitigations</span></div>
+    </div>
+    <header class="mit-title-block">
+      <div>
+        <h1 class="mit-display">The <em>mitigations</em> library.</h1>
+        <p class="mit-lede">Each ATLAS mitigation maps to a set of techniques it addresses. Pick a mitigation from the dropdown to render its radial — then click any technique node to read how the mitigation is used against it.</p>
+      </div>
+      <div class="mit-meta"><span class="mit-num">${String(n).padStart(2,'0')}</span>Mitigations<br><span style="color:var(--mit-ink-4)">ATLAS v4.0</span></div>
+    </header>
+    <div class="mit-selector-wrap">
+      <div class="mit-label-col">
+        <span class="mit-sel-eyebrow">Step 01 · Select a mitigation</span>
+        <div class="mit-sel-row"><select id="mit-select"></select></div>
+      </div>
+      <div class="mit-label-col" style="flex:0 1 280px; min-width:200px;">
+        <span class="mit-sel-eyebrow">Filter</span>
+        <input id="mit-search" type="text" placeholder="Search by ID or name…">
+      </div>
+      <div class="mit-sel-meta" id="mit-sel-meta">— techniques</div>
+    </div>
+    <div class="mit-step-head"><span class="mit-step-num">Step 02</span><span class="mit-step-title">Click a technique on the radial</span><span class="mit-step-hint">Click a node to focus its info card</span></div>
+    <div class="mit-stage">
+      <div class="mit-panel mit-graph-panel">
+        <div class="mit-graph-head">
+          <h2 class="mit-gh-title" id="mit-gh-title">Mitigation</h2>
+          <span class="mit-gh-sub" id="mit-gh-sub">— nodes</span>
+        </div>
+        <div class="mit-graph-wrap"><svg class="mit-graph-svg" id="mit-graph-svg" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet"></svg></div>
+      </div>
+      <div id="mit-cards-grid" class="mit-cards-grid">
+        <div class="mit-empty-state" style="grid-column:1/-1">Select a mitigation to populate the technique cards.</div>
+      </div>
+    </div>`;
+  _rebuildSelect('');
+  document.getElementById('mit-search').addEventListener('input',e=>{ _mitigations.filter=e.target.value; _rebuildSelect(_mitigations.filter); const sel=document.getElementById('mit-select'); if(sel.options.length&&!sel.options[0].disabled){ sel.selectedIndex=0; _selectMitigation(parseInt(sel.value,10)); } });
+  document.getElementById('mit-select').addEventListener('change',e=>{ const v=parseInt(e.target.value,10); if(!isNaN(v))_selectMitigation(v); });
+  _bindKeyboard();
+}
+
+function _rebuildSelect(filter){
+  const sel=document.getElementById('mit-select'); if(!sel)return;
+  const f=(filter||'').trim().toLowerCase();
+  sel.innerHTML='';
+  _mitigations.list.forEach((m,i)=>{ if(f&&!(m.id||'').toLowerCase().includes(f)&&!(m.name||'').toLowerCase().includes(f))return; const opt=document.createElement('option'); opt.value=String(i); opt.textContent=`${m.id} — ${m.name} (${(m.techniques||[]).length})`; sel.appendChild(opt); });
+  if(!sel.options.length){ const opt=document.createElement('option'); opt.textContent='No matches'; opt.disabled=true; opt.selected=true; sel.appendChild(opt); }
+}
+
+function _selectMitigation(idx){
+  const mit=_mitigations.list[idx]; if(!mit)return;
+  _mitigations.currentMitIdx=idx; _mitigations.currentTechIdx=null;
+  document.getElementById('mit-gh-title').textContent=`${mit.id} · ${mit.name}`;
+  const techCount=(mit.techniques||[]).length;
+  document.getElementById('mit-gh-sub').textContent=`${techCount} techniques`;
+  document.getElementById('mit-sel-meta').textContent=`${techCount} techniques`;
+  const sel=document.getElementById('mit-select');
+  if(sel){ for(const opt of sel.options){ if(parseInt(opt.value,10)===idx){ opt.selected=true; break; } } }
+  _buildGraph(mit); _renderCards();
+}
+
+function _buildGraph(mit){
+  const SVG_NS='http://www.w3.org/2000/svg', W=600, H=600, cx=W/2, cy=H/2;
+  const svg=document.getElementById('mit-graph-svg'); svg.innerHTML='';
+  const defs=document.createElementNS(SVG_NS,'defs');
+  defs.innerHTML=`<pattern id="mit-dg-${mit.id}" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.6" fill="#cfc7b3"/></pattern>`;
+  svg.appendChild(defs);
+  const bg=document.createElementNS(SVG_NS,'rect'); bg.setAttribute('x',0); bg.setAttribute('y',0); bg.setAttribute('width',W); bg.setAttribute('height',H); bg.setAttribute('fill',`url(#mit-dg-${mit.id})`); bg.setAttribute('opacity','0.5'); svg.appendChild(bg);
+  const techs=mit.techniques||[], n=techs.length;
+  const baseR=Math.min(220,Math.max(160,130+n*4));
+  [baseR,baseR*0.66,baseR*0.33].forEach(r=>{ const c=document.createElementNS(SVG_NS,'circle'); c.setAttribute('cx',cx); c.setAttribute('cy',cy); c.setAttribute('r',r); c.setAttribute('class','mit-ring'); svg.appendChild(c); });
+  const nodes=techs.map((t,i)=>{ const ang=-Math.PI/2+(i*2*Math.PI/Math.max(n,1)); return{...t,x:cx+Math.cos(ang)*baseR,y:cy+Math.sin(ang)*baseR,idx:i}; });
+  _mitigations._linkEls=nodes.map(node=>{ const line=document.createElementNS(SVG_NS,'line'); line.setAttribute('x1',cx); line.setAttribute('y1',cy); line.setAttribute('x2',node.x); line.setAttribute('y2',node.y); line.setAttribute('class','mit-node-link'); svg.appendChild(line); return line; });
+  const nameLines=_mitWrapText(mit.name,16,3); const lineH=18; const blockH=nameLines.length*lineH; const idY=cy-blockH/2-14; const nameY=cy-blockH/2+12;
+  const tspans=nameLines.map((l,i)=>`<tspan x="${cx}" dy="${i===0?0:lineH}">${_mitEscape(l)}</tspan>`).join('');
+  const cg=document.createElementNS(SVG_NS,'g'); cg.innerHTML=`<circle class="mit-center-circle" cx="${cx}" cy="${cy}" r="64"/><text class="mit-center-id" x="${cx}" y="${idY}">${_mitEscape(mit.id)}</text><text class="mit-center-name" x="${cx}" y="${nameY}">${tspans}</text>`; svg.appendChild(cg);
+  _mitigations._leafEls=nodes.map(node=>{ const g=document.createElementNS(SVG_NS,'g'); g.setAttribute('class','mit-leaf-group'); g.dataset.idx=node.idx; const idShort=(node.id||'').replace('AML.',''); const tname=_mitTechName(node.id||''); const lines=_mitWrapText(tname,16,2); const lnY=node.y>cy?(node.y+38):(node.y-32-(lines.length-1)*12); const ts=lines.map((l,i)=>`<tspan x="${node.x}" dy="${i===0?0:12}">${_mitEscape(l)}</tspan>`).join(''); g.innerHTML=`<circle class="mit-leaf-circle" cx="${node.x}" cy="${node.y}" r="22"/><text class="mit-leaf-id" x="${node.x}" y="${node.y}">${_mitEscape(idShort)}</text><text class="mit-leaf-name" y="${lnY}">${ts}</text>`; g.addEventListener('click',()=>_selectTechnique(node.idx)); svg.appendChild(g); return g; });
+}
+
+function _renderCards(){
+  const grid=document.getElementById('mit-cards-grid'); const mit=_mitigations.list[_mitigations.currentMitIdx];
+  if(!grid)return;
+  if(!mit){ grid.innerHTML='<div class="mit-empty-state" style="grid-column:1/-1">Select a mitigation.</div>'; return; }
+  grid.innerHTML='';
+  const techs=mit.techniques||[], focusedIdx=_mitigations.currentTechIdx;
+  const order=[]; if(focusedIdx!=null)order.push(focusedIdx); techs.forEach((_,i)=>{ if(i!==focusedIdx)order.push(i); });
+  order.forEach(i=>{ const t=techs[i]; const tname=_mitTechName(t.id||''); const isFocused=(i===focusedIdx); const card=document.createElement('div'); card.className='mit-tcard'+(isFocused?' mit-focused mit-fade-in':''); card.dataset.idx=i;
+    if(!isFocused){ card.innerHTML=`<div class="mit-tc-id">${_mitEscape(t.id||'')}</div><div class="mit-tc-name">${_mitEscape(tname)}</div>`; card.addEventListener('click',()=>_selectTechnique(i)); }
+    else{ const useText=t.use||''; const lines=useText.split(/\n/).map(l=>l.replace(/^\s*[-*\u2022]\s*/,'').trim()).filter(Boolean); let bodyHtml; if(lines.length<=1){ bodyHtml=`<p>${_mitEscape(useText.trim())}</p>`; }else{ bodyHtml=`<p>${_mitEscape(lines[0])}</p><ul class="mit-bullets" style="margin-top:10px;">${lines.slice(1).map(l=>`<li>${_mitEscape(l)}</li>`).join('')}</ul>`; } const total=techs.length; card.innerHTML=`<div class="mit-focused-head"><div class="mit-info-eyebrow"><span class="mit-pill mit-id-pill">${_mitEscape(t.id||'')}</span><span class="mit-pill"><span class="mit-pdot"></span>Technique ${String(i+1).padStart(2,'0')} of ${String(total).padStart(2,'0')}</span></div><h2 class="mit-info-title">${_mitEscape(tname)}</h2></div><div class="mit-focused-body"><div class="mit-sec-label">How this mitigation is used</div><div class="mit-sec-body">${bodyHtml}</div></div><div class="mit-focused-foot"><div class="mit-meta-line">${_mitEscape(t.id||'')} · Mitigated by ${_mitEscape(mit.id)}</div><button class="mit-close-btn" id="mit-close-focus">Close ✕</button></div>`; }
+    grid.appendChild(card);
+  });
+  const closeBtn=document.getElementById('mit-close-focus');
+  if(closeBtn){ closeBtn.addEventListener('click',()=>{ _mitigations.currentTechIdx=null; (_mitigations._leafEls||[]).forEach(el=>el.classList.remove('is-active')); (_mitigations._linkEls||[]).forEach(el=>el.classList.remove('is-active')); _renderCards(); }); }
+}
+
+function _selectTechnique(idx){ if(_mitigations.currentMitIdx==null)return; _mitigations.currentTechIdx=idx; (_mitigations._leafEls||[]).forEach((el,i)=>el.classList.toggle('is-active',i===idx)); (_mitigations._linkEls||[]).forEach((el,i)=>el.classList.toggle('is-active',i===idx)); _renderCards(); }
+
+function _bindKeyboard(){ if(_mitigations._kbBound)return; _mitigations._kbBound=true; document.addEventListener('keydown',e=>{ if(_mitigations.currentMitIdx==null||_mitigations.currentTechIdx==null)return; const mit=_mitigations.list[_mitigations.currentMitIdx]; const total=(mit.techniques||[]).length; if(e.key==='ArrowLeft')_selectTechnique((_mitigations.currentTechIdx-1+total)%total); if(e.key==='ArrowRight')_selectTechnique((_mitigations.currentTechIdx+1)%total); }); }
+
+init();
+</script>
+</body>
+</html>

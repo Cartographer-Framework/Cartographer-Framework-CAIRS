@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartographer — Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:   #f2ede3;
+    --paper-2: #e9e3d6;
+    --paper-3: #dfd8c8;
+    --ink:     #1a1714;
+    --ink-2:   #3d3830;
+    --ink-3:   #6e6659;
+    --ink-4:   #9e9588;
+    --rule:    #cfc8b8;
+    --rule-2:  #bfb8a8;
+    --accent:  oklch(0.55 0.09 195);
+    --gold:    #b8922a;
+    --shadow:  0 1px 0 rgba(26,23,20,0.04),
+               0 20px 40px -24px rgba(26,23,20,0.22),
+               0 4px 12px -4px rgba(26,23,20,0.07);
+    --r: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    min-height: 100vh;
+    /* subtle grid texture */
+    background-image:
+      linear-gradient(rgba(26,23,20,0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,23,20,0.028) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(242,237,227,0.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 0;
+    height: 56px;
+  }
+  .nav-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-3); margin-right: auto;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent), transparent 75%);
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 2px;
+  }
+  .nav-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); text-decoration: none;
+    padding: 8px 14px; border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .nav-link:hover { color: var(--ink); background: rgba(26,23,20,0.06); }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 1100px; margin: 0 auto;
+    padding: 80px 48px 64px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-4); margin-bottom: 20px;
+  }
+  .hero-eyebrow::after {
+    content: ''; flex: 1; max-width: 80px;
+    height: 1px; background: var(--rule-2);
+  }
+  .hero-title {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(48px, 7vw, 84px);
+    font-weight: 400; line-height: 0.92; letter-spacing: -0.02em;
+    color: var(--ink); margin-bottom: 24px;
+  }
+  .hero-title em { font-style: italic; color: var(--ink-2); }
+  .hero-body {
+    max-width: 52ch; color: var(--ink-2);
+    font-size: 16px; line-height: 1.65; margin-bottom: 40px;
+  }
+
+  /* What this is notice */
+  .hero-notice {
+    display: inline-flex; align-items: flex-start; gap: 10px;
+    background: var(--paper-2); border: 1px solid var(--rule);
+    border-radius: 8px; padding: 14px 18px;
+    font-size: 13px; color: var(--ink-3); line-height: 1.55; max-width: 56ch;
+  }
+  .hero-notice strong { color: var(--ink-2); }
+  .hero-notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-4); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before { content: attr(data-n); color: var(--gold); }
+  .section-label::after  { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+  /* ── SHOWCASE GRID ── */
+  .showcase {
+    max-width: 1100px; margin: 0 auto;
+    padding: 64px 48px 80px;
+  }
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #faf7f0;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 0.22s cubic-bezier(.2,.7,.2,1), box-shadow 0.22s ease;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1px 0 rgba(26,23,20,0.04),
+                0 32px 56px -24px rgba(26,23,20,0.28),
+                0 6px 18px -6px rgba(26,23,20,0.10);
+  }
+  /* accent line per card */
+  .card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    opacity: 0; transition: opacity 0.22s;
+  }
+  .card:hover::before { opacity: 1; }
+  .card-tactics::before   { background: linear-gradient(90deg, var(--accent), transparent); }
+  .card-remed::before     { background: linear-gradient(90deg, #c07830, transparent); }
+  .card-mitig::before     { background: linear-gradient(90deg, #6058c8, transparent); }
+  .card-severity::before  { background: linear-gradient(90deg, #c03830, transparent); }
+
+  .card-preview {
+    height: 200px;
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+    padding: 20px;
+  }
+
+  /* ── SVG mini-previews (inline, no server) ── */
+  .preview-svg { width: 100%; height: 100%; }
+
+  .card-body { padding: 22px 24px 24px; flex: 1; display: flex; flex-direction: column; }
+  .card-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-4); margin-bottom: 8px;
+  }
+  .card-title {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 28px; line-height: 1.05; margin-bottom: 10px; color: var(--ink);
+  }
+  .card-desc {
+    font-size: 13px; color: var(--ink-3); line-height: 1.6;
+    flex: 1; margin-bottom: 20px;
+  }
+  .card-meta {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .card-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 999px;
+    border: 1px solid var(--rule); color: var(--ink-3);
+  }
+  .card-footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 18px;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 10px 18px; border-radius: 999px;
+    background: var(--ink); color: var(--paper);
+    text-decoration: none;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--ink-2); transform: translateY(-1px); }
+  .btn-primary .arrow { transition: transform 0.15s; }
+  .btn-primary:hover .arrow { transform: translateX(3px); }
+  .btn-secondary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3); text-decoration: none;
+    padding: 10px 14px; border-radius: 999px;
+    border: 1px solid var(--rule);
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .btn-secondary:hover { color: var(--ink); border-color: var(--ink-3); }
+
+  /* ── DATA NOTE ── */
+  .data-note {
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 48px 64px;
+  }
+  .data-note-inner {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: var(--r);
+    padding: 24px 28px;
+    display: grid; grid-template-columns: auto 1fr; gap: 16px 20px;
+    align-items: start;
+  }
+  .data-note-title {
+    grid-column: 1 / -1;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .data-note-step {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    color: var(--gold); letter-spacing: 0.06em;
+    padding-top: 1px;
+  }
+  .data-note-body { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+  .data-note-body code {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    background: rgba(26,23,20,0.06); padding: 1px 5px; border-radius: 3px;
+    color: var(--ink-2);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 28px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 100%;
+  }
+  .footer-left {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-4);
+  }
+  .footer-right {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; color: var(--ink-4);
+  }
+
+  @media (max-width: 720px) {
+    .nav { padding: 0 20px; }
+    .hero, .showcase, .data-note { padding-left: 20px; padding-right: 20px; }
+    .showcase-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; padding: 20px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="nav-dot"></span>
+    Cartographer · Framework
+  </div>
+  <div class="nav-links">
+    <a href="#showcase" class="nav-link">Showcase</a>
+
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow" data-n="">Cartographer Framework · Resume Showcase</div>
+  <h1 class="hero-title">
+    AI/LLM Threat<br>
+    <em>Intelligence Tools</em>
+  </h1>
+  <p class="hero-body">
+    Four interactive libraries built for the Cartographer red-teaming framework —
+    each maps a different layer of the MITRE ATLAS threat model: tactics, severity
+    bands, remediation categories, and the 35-mitigation library that ties them together.
+  </p>
+  <div class="hero-notice">
+    <span class="hero-notice-icon">ℹ</span>
+    <span>
+      <strong>Portfolio context:</strong> These are extracted, standalone views from a
+      larger red-teaming platform. Drop your own JSON data files into <code>/data/</code>
+      and every view populates automatically — no build step, no server.
+    </span>
+  </div>
+</section>
+
+<!-- ── SHOWCASE ── -->
+<section class="showcase" id="showcase">
+  <div class="section-label" data-n="01">Interactive views</div>
+
+  <div class="showcase-grid">
+
+    <!-- Tactics -->
+    <div class="card card-tactics">
+      <div class="card-preview">
+        <svg class="preview-svg" viewBox="0 0 380 190" xmlns="http://www.w3.org/2000/svg">
+          <rect width="380" height="190" fill="#ebe5d6"/>
+          <!-- dot grid -->
+          <pattern id="dg1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill="#b8b0a0" opacity="0.6"/>
+          </pattern>
+          <rect width="380" height="190" fill="url(#dg1)"/>
+          <!-- center -->
+          <circle cx="190" cy="95" r="42" fill="#1a1714"/>
+          <text x="190" y="89" text-anchor="middle" font-family="monospace" font-size="8" fill="#f2ede3" letter-spacing="2" opacity="0.7">MITRE · ATLAS</text>
+          <text x="190" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#f2ede3">Tactics</text>
+          <text x="190" y="113" text-anchor="middle" font-family="monospace" font-size="7" fill="#f2ede3" opacity="0.5" letter-spacing="1.5">V4.0 · 16 NODES</text>
+          <!-- radial rings -->
+          <circle cx="190" cy="95" r="80" fill="none" stroke="#b8b0a0" stroke-dasharray="2 4"/>
+          <circle cx="190" cy="95" r="53" fill="none" stroke="#b8b0a0" stroke-dasharray="2 4" opacity="0.5"/>
+          <!-- nodes at 16 positions -->
+          <g font-family="monospace" font-size="7.5" fill="#3d3830">
+            <g><line x1="190" y1="95" x2="190" y2="14" stroke="#cfc8b8"/><circle cx="190" cy="14" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="190" y="17" text-anchor="middle">Recon</text></g>
+            <g><line x1="190" y1="95" x2="240" y2="18" stroke="#cfc8b8"/><circle cx="240" cy="18" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="240" y="21" text-anchor="middle">Res Dev</text></g>
+            <g><line x1="190" y1="95" x2="279" y2="37" stroke="#cfc8b8"/><circle cx="279" cy="37" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="279" y="40" text-anchor="middle">Init Acc</text></g>
+            <g><line x1="190" y1="95" x2="302" y2="70" stroke="#cfc8b8"/><circle cx="302" cy="70" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="302" y="73" text-anchor="middle">ML Acc</text></g>
+            <g><line x1="190" y1="95" x2="302" y2="120" stroke="#cfc8b8"/><circle cx="302" cy="120" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="302" y="123" text-anchor="middle">Exec</text></g>
+            <g><line x1="190" y1="95" x2="279" y2="153" stroke="#cfc8b8"/><circle cx="279" cy="153" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="279" y="156" text-anchor="middle">Persist</text></g>
+            <g><line x1="190" y1="95" x2="240" y2="172" stroke="#cfc8b8"/><circle cx="240" cy="172" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="240" y="175" text-anchor="middle">Def Eva</text></g>
+            <g><line x1="190" y1="95" x2="190" y2="176" stroke="#cfc8b8"/><circle cx="190" cy="176" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="190" y="179" text-anchor="middle">Discov</text></g>
+            <g><line x1="190" y1="95" x2="140" y2="172" stroke="#cfc8b8"/><circle cx="140" cy="172" r="14" fill="#1a1714" stroke="#1a1714"/><text x="140" y="175" text-anchor="middle" fill="#f2ede3">Coll</text></g>
+            <g><line x1="190" y1="95" x2="101" y2="153" stroke="#cfc8b8"/><circle cx="101" cy="153" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="101" y="156" text-anchor="middle">ML Stg</text></g>
+            <g><line x1="190" y1="95" x2="78" y2="120" stroke="#cfc8b8"/><circle cx="78" cy="120" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="78" y="123" text-anchor="middle">Exfil</text></g>
+            <g><line x1="190" y1="95" x2="78" y2="70" stroke="#cfc8b8"/><circle cx="78" cy="70" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="78" y="73" text-anchor="middle">Impact</text></g>
+            <g><line x1="190" y1="95" x2="101" y2="37" stroke="#cfc8b8"/><circle cx="101" cy="37" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="101" y="40" text-anchor="middle">Priv Esc</text></g>
+            <g><line x1="190" y1="95" x2="140" y2="18" stroke="#cfc8b8"/><circle cx="140" cy="18" r="14" fill="#f2ede3" stroke="#6e6659"/><text x="140" y="21" text-anchor="middle">Cred Acc</text></g>
+          </g>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">Library · 01</div>
+        <h2 class="card-title">Tactics Gallery</h2>
+        <p class="card-desc">Sixteen MITRE ATLAS tactics rendered as an interactive radial graph. Click any node to read what the adversary is attempting at that phase and how it advances compromise of an AI/LLM system.</p>
+        <div class="card-meta">
+          <span class="card-tag">16 tactics</span>
+          <span class="card-tag">ATLAS v4.0</span>
+          <span class="card-tag">Interactive</span>
+        </div>
+        <div class="card-footer">
+          <a href="tactics.html" class="btn-primary">Open <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remediations -->
+    <div class="card card-remed">
+      <div class="card-preview">
+        <svg class="preview-svg" viewBox="0 0 380 190" xmlns="http://www.w3.org/2000/svg">
+          <rect width="380" height="190" fill="#ebe5d6"/>
+          <pattern id="dg2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill="#b8b0a0" opacity="0.6"/>
+          </pattern>
+          <rect width="380" height="190" fill="url(#dg2)"/>
+          <!-- 5 category tiles -->
+          <g font-family="Georgia,serif">
+            <rect x="14" y="14" width="60" height="74" rx="6" fill="#1a1714"/>
+            <text x="44" y="38" text-anchor="middle" font-family="monospace" font-size="7" fill="#f2ede3" opacity="0.6">CAT · 01</text>
+            <text x="44" y="56" text-anchor="middle" font-size="13" fill="#f2ede3">System</text>
+            <text x="44" y="70" text-anchor="middle" font-size="13" fill="#f2ede3">Monitor</text>
+            <rect x="83" y="14" width="60" height="74" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+            <text x="113" y="38" text-anchor="middle" font-family="monospace" font-size="7" fill="#6e6659">CAT · 02</text>
+            <text x="113" y="56" text-anchor="middle" font-size="13" fill="#3d3830">Model</text>
+            <text x="113" y="70" text-anchor="middle" font-size="13" fill="#3d3830">Harden</text>
+            <rect x="152" y="14" width="60" height="74" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+            <text x="182" y="38" text-anchor="middle" font-family="monospace" font-size="7" fill="#6e6659">CAT · 03</text>
+            <text x="182" y="56" text-anchor="middle" font-size="13" fill="#3d3830">Input</text>
+            <text x="182" y="70" text-anchor="middle" font-size="13" fill="#3d3830">Sanitize</text>
+            <rect x="221" y="14" width="60" height="74" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+            <text x="251" y="38" text-anchor="middle" font-family="monospace" font-size="7" fill="#6e6659">CAT · 04</text>
+            <text x="251" y="56" text-anchor="middle" font-size="13" fill="#3d3830">Process</text>
+            <text x="251" y="70" text-anchor="middle" font-size="13" fill="#3d3830">Sanitize</text>
+            <rect x="290" y="14" width="60" height="74" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+            <text x="320" y="38" text-anchor="middle" font-family="monospace" font-size="7" fill="#6e6659">CAT · 05</text>
+            <text x="320" y="56" text-anchor="middle" font-size="13" fill="#3d3830">Output</text>
+            <text x="320" y="70" text-anchor="middle" font-size="13" fill="#3d3830">Sanitize</text>
+          </g>
+          <!-- info card preview -->
+          <rect x="14" y="100" width="220" height="76" rx="6" fill="#faf7f0" stroke="#cfc8b8"/>
+          <text x="26" y="118" font-family="monospace" font-size="8" fill="#6e6659" letter-spacing="1.5">RATIONALE</text>
+          <text x="26" y="132" font-family="Georgia,serif" font-size="11" fill="#1a1714">System Monitoring</text>
+          <text x="26" y="148" font-family="sans-serif" font-size="9" fill="#6e6659">Detect anomalous behavior before</text>
+          <text x="26" y="160" font-family="sans-serif" font-size="9" fill="#6e6659">it becomes a breach.</text>
+          <!-- radial mini -->
+          <circle cx="322" cy="138" r="36" fill="none" stroke="#b8b0a0" stroke-dasharray="2 4"/>
+          <circle cx="322" cy="138" r="18" fill="#1a1714" stroke="#1a1714"/>
+          <text x="322" y="141" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#f2ede3">Cat 01</text>
+          <line x1="322" y1="138" x2="322" y2="102" stroke="#b8b0a0"/>
+          <circle cx="322" cy="102" r="8" fill="#f2ede3" stroke="#6e6659"/>
+          <line x1="322" y1="138" x2="352" y2="152" stroke="#b8b0a0"/>
+          <circle cx="352" cy="152" r="8" fill="#f2ede3" stroke="#6e6659"/>
+          <line x1="322" y1="138" x2="292" y2="152" stroke="#b8b0a0"/>
+          <circle cx="292" cy="152" r="8" fill="#f2ede3" stroke="#6e6659"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">Library · 02</div>
+        <h2 class="card-title">Remediation Atlas</h2>
+        <p class="card-desc">Five fault-localization categories, each mapping ATLAS mitigations to a phase of the remediation lifecycle. Toggle the radial panel to trace which mitigations belong to each category.</p>
+        <div class="card-meta">
+          <span class="card-tag">5 categories</span>
+          <span class="card-tag">Fault localization</span>
+          <span class="card-tag">Radial graph</span>
+        </div>
+        <div class="card-footer">
+          <a href="remediations.html" class="btn-primary">Open <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mitigations -->
+    <div class="card card-mitig">
+      <div class="card-preview">
+        <svg class="preview-svg" viewBox="0 0 380 190" xmlns="http://www.w3.org/2000/svg">
+          <rect width="380" height="190" fill="#ebe5d6"/>
+          <pattern id="dg3" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill="#b8b0a0" opacity="0.6"/>
+          </pattern>
+          <rect width="380" height="190" fill="url(#dg3)"/>
+          <!-- dropdown suggestion -->
+          <rect x="14" y="14" width="210" height="34" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+          <text x="24" y="34" font-family="Georgia,serif" font-size="11" fill="#1a1714">AML.M0004 — Restrict …</text>
+          <text x="200" y="34" font-family="monospace" font-size="10" fill="#6e6659">▾</text>
+          <!-- radial -->
+          <circle cx="130" cy="118" r="52" fill="none" stroke="#b8b0a0" stroke-dasharray="2 4"/>
+          <circle cx="130" cy="118" r="24" fill="#1a1714"/>
+          <text x="130" y="113" text-anchor="middle" font-family="monospace" font-size="7" fill="#f2ede3" opacity="0.65" letter-spacing="1">AML.M0004</text>
+          <text x="130" y="125" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#f2ede3">Restrict</text>
+          <g stroke="#b8b0a0">
+            <line x1="130" y1="118" x2="130" y2="66"/><circle cx="130" cy="66" r="11" fill="#f2ede3" stroke="#6e6659"/>
+            <line x1="130" y1="118" x2="170" y2="70"/><circle cx="170" cy="70" r="11" fill="#f2ede3" stroke="#6e6659"/>
+            <line x1="130" y1="118" x2="177" y2="112"/><circle cx="177" cy="112" r="11" fill="#f2ede3" stroke="#6e6659"/>
+            <line x1="130" y1="118" x2="166" y2="154"/><circle cx="166" cy="154" r="11" fill="#f2ede3" stroke="#6e6659"/>
+            <line x1="130" y1="118" x2="130" y2="170"/><circle cx="130" cy="170" r="11" fill="#1a1714" stroke="#1a1714"/>
+            <line x1="130" y1="118" x2="94" y2="154"/><circle cx="94" cy="154" r="11" fill="#f2ede3" stroke="#6e6659"/>
+            <line x1="130" y1="118" x2="83" y2="112"/><circle cx="83" cy="112" r="11" fill="#f2ede3" stroke="#6e6659"/>
+            <line x1="130" y1="118" x2="90" y2="70"/><circle cx="90" cy="70" r="11" fill="#f2ede3" stroke="#6e6659"/>
+          </g>
+          <!-- tech card -->
+          <rect x="238" y="56" width="128" height="120" rx="6" fill="#faf7f0" stroke="#1a1714"/>
+          <rect x="238" y="56" width="128" height="2" rx="1" fill="#1a1714"/>
+          <text x="250" y="76" font-family="monospace" font-size="7" fill="#6e6659" letter-spacing="1.2">AML.T0051.000</text>
+          <text x="250" y="92" font-family="Georgia,serif" font-size="11" fill="#1a1714">Prompt</text>
+          <text x="250" y="106" font-family="Georgia,serif" font-size="11" fill="#1a1714">Injection</text>
+          <text x="250" y="120" font-family="sans-serif" font-size="8" fill="#6e6659">How this mitigation</text>
+          <text x="250" y="131" font-family="sans-serif" font-size="8" fill="#6e6659">addresses direct injection:</text>
+          <text x="250" y="147" font-family="sans-serif" font-size="8.5" fill="#3d3830">Limit inference API</text>
+          <text x="250" y="158" font-family="sans-serif" font-size="8.5" fill="#3d3830">exposure and monitor</text>
+          <text x="250" y="169" font-family="sans-serif" font-size="8.5" fill="#3d3830">query patterns.</text>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">Library · 03</div>
+        <h2 class="card-title">Mitigations Library</h2>
+        <p class="card-desc">All 35 ATLAS mitigations, each rendered as a radial map of the techniques it addresses. Select a mitigation, then click any technique node to read the specific usage guidance.</p>
+        <div class="card-meta">
+          <span class="card-tag">35 mitigations</span>
+          <span class="card-tag">52+ techniques</span>
+          <span class="card-tag">Cross-referenced</span>
+        </div>
+        <div class="card-footer">
+          <a href="mitigations.html" class="btn-primary">Open <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Severity -->
+    <div class="card card-severity">
+      <div class="card-preview">
+        <svg class="preview-svg" viewBox="0 0 380 190" xmlns="http://www.w3.org/2000/svg">
+          <rect width="380" height="190" fill="#ebe5d6"/>
+          <pattern id="dg4" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill="#b8b0a0" opacity="0.6"/>
+          </pattern>
+          <rect width="380" height="190" fill="url(#dg4)"/>
+          <!-- 4 severity tiles -->
+          <g font-family="Georgia,serif">
+            <rect x="14" y="14" width="78" height="90" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+            <text x="53" y="34" text-anchor="middle" font-family="monospace" font-size="7" fill="#6e6659">CAT · 01</text>
+            <circle cx="53" cy="52" r="6" fill="oklch(0.62 0.08 145)"/>
+            <text x="53" y="70" text-anchor="middle" font-size="12" fill="#3d3830">Low</text>
+            <text x="53" y="84" text-anchor="middle" font-size="8" fill="#6e6659">Recon</text>
+            <text x="53" y="94" text-anchor="middle" font-size="8" fill="#6e6659">phase</text>
+            <rect x="100" y="14" width="78" height="90" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+            <text x="139" y="34" text-anchor="middle" font-family="monospace" font-size="7" fill="#6e6659">CAT · 02</text>
+            <circle cx="139" cy="52" r="6" fill="oklch(0.68 0.10 75)"/>
+            <text x="139" y="70" text-anchor="middle" font-size="12" fill="#3d3830">Medium</text>
+            <text x="139" y="84" text-anchor="middle" font-size="8" fill="#6e6659">Staging</text>
+            <text x="139" y="94" text-anchor="middle" font-size="8" fill="#6e6659">phase</text>
+            <rect x="186" y="14" width="78" height="90" rx="6" fill="#f2ede3" stroke="#b8b0a0"/>
+            <text x="225" y="34" text-anchor="middle" font-family="monospace" font-size="7" fill="#6e6659">CAT · 03</text>
+            <circle cx="225" cy="52" r="6" fill="oklch(0.58 0.13 35)"/>
+            <text x="225" y="70" text-anchor="middle" font-size="12" fill="#3d3830">High</text>
+            <text x="225" y="84" text-anchor="middle" font-size="8" fill="#6e6659">Active</text>
+            <text x="225" y="94" text-anchor="middle" font-size="8" fill="#6e6659">attack</text>
+            <rect x="272" y="14" width="94" height="90" rx="6" fill="#1a1714" stroke="#1a1714"/>
+            <text x="319" y="34" text-anchor="middle" font-family="monospace" font-size="7" fill="#f2ede3" opacity="0.6">CAT · 04</text>
+            <circle cx="319" cy="52" r="6" fill="oklch(0.50 0.16 25)"/>
+            <text x="319" y="70" text-anchor="middle" font-size="12" fill="#f2ede3">Critical</text>
+            <text x="319" y="84" text-anchor="middle" font-size="8" fill="#f2ede3" opacity="0.7">Exfil /</text>
+            <text x="319" y="94" text-anchor="middle" font-size="8" fill="#f2ede3" opacity="0.7">Impact</text>
+          </g>
+          <!-- info card -->
+          <rect x="14" y="116" width="340" height="60" rx="6" fill="#faf7f0" stroke="#b8b0a0"/>
+          <text x="26" y="134" font-family="monospace" font-size="8" fill="#6e6659" letter-spacing="1">DEFINITION</text>
+          <text x="26" y="150" font-family="Georgia,serif" font-size="12" fill="#1a1714">Critical — Exfiltration &amp; Impact</text>
+          <text x="26" y="165" font-family="sans-serif" font-size="9" fill="#6e6659">3 tactics define this band: Impact · Exfiltration · External Harms</text>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">Library · 04</div>
+        <h2 class="card-title">Severity Atlas</h2>
+        <p class="card-desc">Four severity bands — Low through Critical — each defined by a specific subset of ATLAS tactics. Understand why a given tactic elevates severity and how the bands map to the attack chain.</p>
+        <div class="card-meta">
+          <span class="card-tag">4 bands</span>
+          <span class="card-tag">ATLAS tactics</span>
+          <span class="card-tag">Attack chain</span>
+        </div>
+        <div class="card-footer">
+          <a href="severity.html" class="btn-primary">Open <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<footer>
+  <span class="footer-left">Cartographer Framework · Portfolio Showcase</span>
+  <span class="footer-right">MITRE ATLAS v4.0 · Static · No build step</span>
+</footer>
+
+</body>
+</html>

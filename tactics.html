@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tactics Gallery — Cartographer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── shared page chrome ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f4f0e8; color: #1a1916;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 15px; line-height: 1.55;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%),
+      radial-gradient(circle at 90% 110%, rgba(0,0,0,0.025), transparent 50%);
+  }
+  .page-bar {
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(244,240,232,0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #d6cfbf;
+    padding: 0 28px; height: 48px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .back-btn {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #6b655a; text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px;
+    border: 1px solid #d6cfbf; background: transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .back-btn:hover { color: #1a1916; border-color: #1a1916; background: rgba(26,25,22,0.04); }
+  .page-bar-title {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: #948c7d;
+  }
+
+  /* ── pulled straight from the original dashboard.js _tacInjectCss(), untouched ── */
+  #s-tactics{
+    --tac-paper:#f4f0e8; --tac-paper-2:#ebe6dc; --tac-paper-3:#e3ddd0;
+    --tac-ink:#1a1916; --tac-ink-2:#3a352d; --tac-ink-3:#6b655a; --tac-ink-4:#948c7d;
+    --tac-rule:#d6cfbf; --tac-rule-soft:#e0d9c8;
+    --tac-accent: oklch(0.55 0.06 195);
+    --tac-shadow-card: 0 1px 0 rgba(26,25,22,0.04), 0 24px 48px -28px rgba(26,25,22,0.18), 0 4px 12px -4px rgba(26,25,22,0.06);
+    --tac-r-lg:14px;
+    background:var(--tac-paper);
+    color:var(--tac-ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    font-size:15px; line-height:1.55;
+  }
+  #s-tactics, #s-tactics *{ box-sizing:border-box; }
+  #s-tactics .tac-shell{ max-width:1280px; margin:0 auto; padding:56px 48px 96px; }
+  #s-tactics .tac-loading{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--tac-ink-3); padding:80px 0; text-align:center; line-height:1.8; }
+  #s-tactics .tac-topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; }
+  #s-tactics .tac-brandmark{ display:flex; align-items:center; gap:12px; }
+  #s-tactics .tac-dot{ width:10px; height:10px; border-radius:50%; background:var(--tac-accent); box-shadow:0 0 0 4px color-mix(in oklch, var(--tac-accent), transparent 80%); }
+  #s-tactics .tac-label, #s-tactics .tac-crumbs{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--tac-ink-3); }
+  #s-tactics .tac-crumbs .tac-sep{ margin:0 8px; opacity:0.5; }
+  #s-tactics .tac-crumbs .tac-now{ color:var(--tac-ink-2); }
+  #s-tactics .tac-title-block{ display:grid; grid-template-columns:1fr auto; gap:32px; align-items:end; padding-bottom:28px; border-bottom:1px solid var(--tac-rule); margin-bottom:36px; }
+  #s-tactics .tac-display{ font-family:'Instrument Serif', Georgia, serif; font-weight:400; font-size:64px; line-height:0.95; letter-spacing:-0.01em; margin:0 0 14px; }
+  #s-tactics .tac-display em{ font-style:italic; color:var(--tac-ink-2); }
+  #s-tactics .tac-lede{ max-width:56ch; color:var(--tac-ink-2); font-size:16px; line-height:1.6; margin:0; }
+  #s-tactics .tac-meta{ text-align:right; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--tac-ink-3); line-height:1.8; }
+  #s-tactics .tac-num{ font-family:'Instrument Serif', Georgia, serif; font-size:40px; color:var(--tac-ink); letter-spacing:0; text-transform:none; display:block; line-height:1; margin-bottom:4px; }
+  #s-tactics .tac-step-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:18px; }
+  #s-tactics .tac-step-num{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--tac-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-tactics .tac-step-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; }
+  #s-tactics .tac-step-hint{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--tac-ink-4); letter-spacing:0.08em; text-transform:uppercase; }
+  #s-tactics .tac-stage{ position:relative; display:grid; grid-template-columns:1fr 1fr; gap:24px; height:760px; }
+  #s-tactics .tac-panel{ background:#fbf8f1; border:1px solid var(--tac-rule); border-radius:var(--tac-r-lg); box-shadow:var(--tac-shadow-card); overflow:hidden; }
+  #s-tactics .tac-graph-panel{ display:flex; flex-direction:column; }
+  #s-tactics .tac-graph-head{ padding:22px 26px 16px; border-bottom:1px solid var(--tac-rule-soft); display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  #s-tactics .tac-gh-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; line-height:1.1; margin:0; }
+  #s-tactics .tac-gh-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--tac-ink-3); }
+  #s-tactics .tac-graph-wrap{ flex:1; position:relative; }
+  #s-tactics .tac-graph-svg{ width:100%; height:100%; display:block; }
+  #s-tactics .tac-ring{ fill:none; stroke:var(--tac-rule); stroke-dasharray:2 4; }
+  #s-tactics .tac-node-link{ stroke:var(--tac-rule); stroke-width:1; fill:none; transition:stroke 0.25s, stroke-width 0.25s; }
+  #s-tactics .tac-node-link.is-active{ stroke:var(--tac-ink); stroke-width:1.6; }
+  #s-tactics .tac-leaf-circle{ fill:var(--tac-paper); stroke:var(--tac-ink-3); stroke-width:1; transition:fill 0.2s, stroke 0.2s, r 0.2s; }
+  #s-tactics .tac-leaf-group{ cursor:pointer; }
+  #s-tactics .tac-leaf-group:hover .tac-leaf-circle{ fill:#f7f3eb; stroke:var(--tac-ink); }
+  #s-tactics .tac-leaf-group.is-active .tac-leaf-circle{ fill:var(--tac-ink); stroke:var(--tac-ink); }
+  #s-tactics .tac-leaf-group.is-active .tac-leaf-id{ fill:var(--tac-paper); }
+  #s-tactics .tac-leaf-group.is-active .tac-leaf-name{ fill:var(--tac-ink); font-weight:500; }
+  #s-tactics .tac-leaf-id{ font-family:'IBM Plex Mono', monospace; font-size:9px; fill:var(--tac-ink-2); text-anchor:middle; dominant-baseline:central; letter-spacing:0.04em; pointer-events:none; }
+  #s-tactics .tac-leaf-name{ font-family:'IBM Plex Sans', sans-serif; font-size:10.5px; fill:var(--tac-ink-3); text-anchor:middle; pointer-events:none; }
+  #s-tactics .tac-center-circle{ fill:var(--tac-ink); stroke:var(--tac-ink); }
+  #s-tactics .tac-center-id, #s-tactics .tac-center-name, #s-tactics .tac-center-sub{ text-anchor:middle; pointer-events:none; fill:var(--tac-paper); }
+  #s-tactics .tac-center-id{ font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; opacity:0.6; }
+  #s-tactics .tac-center-name{ font-family:'Instrument Serif', Georgia, serif; font-size:18px; }
+  #s-tactics .tac-center-sub{ font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:0.16em; text-transform:uppercase; opacity:0.5; }
+  #s-tactics .tac-info-panel{ display:flex; flex-direction:column; }
+  #s-tactics .tac-info-head{ padding:28px 32px 22px; border-bottom:1px solid var(--tac-rule-soft); background:linear-gradient(180deg, #fdfaf3, #fbf8f1); }
+  #s-tactics .tac-info-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  #s-tactics .tac-pill{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--tac-ink-3); padding:4px 10px; border:1px solid var(--tac-rule); border-radius:999px; background:var(--tac-paper); }
+  #s-tactics .tac-pill .tac-pdot{ width:6px; height:6px; border-radius:50%; background:var(--tac-accent); }
+  #s-tactics .tac-pill.tac-id-pill{ background:var(--tac-ink); color:var(--tac-paper); border-color:var(--tac-ink); }
+  #s-tactics .tac-info-title{ font-family:'Instrument Serif', Georgia, serif; font-size:38px; line-height:1.05; letter-spacing:-0.01em; margin:0 0 12px; }
+  #s-tactics .tac-info-blurb{ color:var(--tac-ink-2); font-size:15px; line-height:1.6; max-width:56ch; margin:0; font-style:italic; }
+  #s-tactics .tac-info-blurb::before{ content:"\201C"; font-family:'Instrument Serif', Georgia, serif; color:var(--tac-ink-4); font-size:28px; line-height:0; vertical-align:-10px; margin-right:4px; }
+  #s-tactics .tac-info-blurb::after{  content:"\201D"; font-family:'Instrument Serif', Georgia, serif; color:var(--tac-ink-4); font-size:28px; line-height:0; vertical-align:-10px; margin-left:2px; }
+  #s-tactics .tac-info-body{ flex:1; overflow-y:auto; padding:26px 32px 28px; scrollbar-width:thin; scrollbar-color:var(--tac-rule) transparent; }
+  #s-tactics .tac-info-body::-webkit-scrollbar{ width:8px; }
+  #s-tactics .tac-info-body::-webkit-scrollbar-thumb{ background:var(--tac-rule); border-radius:4px; }
+  #s-tactics .tac-section{ margin-bottom:26px; }
+  #s-tactics .tac-section:last-child{ margin-bottom:0; }
+  #s-tactics .tac-sec-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--tac-ink-3); margin-bottom:10px; }
+  #s-tactics .tac-sec-h{ font-family:'Instrument Serif', Georgia, serif; font-size:20px; line-height:1.25; margin:0 0 12px; color:var(--tac-ink); }
+  #s-tactics ul.tac-bullets{ list-style:none; padding:0; margin:0; counter-reset:tacli; }
+  #s-tactics ul.tac-bullets li{ position:relative; padding:12px 0 12px 28px; border-top:1px solid var(--tac-rule-soft); color:var(--tac-ink-2); font-size:14.5px; line-height:1.6; }
+  #s-tactics ul.tac-bullets li:first-child{ border-top:none; padding-top:4px; }
+  #s-tactics ul.tac-bullets li::before{ content: counter(tacli, decimal-leading-zero); counter-increment:tacli; position:absolute; left:0; top:14px; font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--tac-ink-4); letter-spacing:0.08em; }
+  #s-tactics ul.tac-bullets li:first-child::before{ top:6px; }
+  #s-tactics .tac-info-foot{ border-top:1px solid var(--tac-rule-soft); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--tac-paper-2); }
+  #s-tactics .tac-meta-line{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--tac-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-tactics .tac-nav-btns{ display:flex; gap:6px; }
+  #s-tactics .tac-nav-btn{ background:var(--tac-paper); border:1px solid var(--tac-rule); border-radius:999px; padding:8px 14px; font:500 11px/1 'IBM Plex Sans', sans-serif; letter-spacing:0.06em; text-transform:uppercase; color:var(--tac-ink-2); cursor:pointer; transition:background 0.15s, border-color 0.15s, color 0.15s; }
+  #s-tactics .tac-nav-btn:hover{ background:var(--tac-ink); border-color:var(--tac-ink); color:var(--tac-paper); }
+  #s-tactics .tac-fade-in{ animation:tacFadeUp 0.45s 0.05s both ease-out; }
+  @keyframes tacFadeUp{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+  #s-tactics .tac-backbar{ margin-top:28px; display:flex; justify-content:flex-start; }
+  @media (max-width: 980px) {
+    #s-tactics .tac-shell{ padding:32px 20px 60px; }
+    #s-tactics .tac-display{ font-size:44px; }
+    #s-tactics .tac-stage{ grid-template-columns:1fr; height:auto; }
+    #s-tactics .tac-graph-panel{ height:540px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-bar">
+  <a href="index.html" class="back-btn">← Showcase</a>
+  <span class="page-bar-title">Tactics Gallery · MITRE ATLAS</span>
+</div>
+
+<div id="s-tactics">
+  <div class="tac-shell">
+    <div id="tactics-root"></div>
+  </div>
+</div>
+
+<script>
+// ── Shared helpers ──────────────────────────────────────────────────────────
+function _tacEscape(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function _tacWrapText(str, maxChars) {
+  const words = str.split(/\s+/);
+  const lines = []; let cur = "";
+  for (const w of words) {
+    if ((cur + " " + w).trim().length > maxChars) { if (cur) lines.push(cur); cur = w; }
+    else { cur = (cur + " " + w).trim(); }
+  }
+  if (cur) lines.push(cur);
+  return lines.slice(0, 2);
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
+const _tactics = { data: null, current: null, _leafEls: [], _linkEls: [], _kbBound: false };
+
+// ── Init: fetch data, render ───────────────────────────────────────────────
+async function init() {
+  const root = document.getElementById('tactics-root');
+  root.innerHTML = '<div class="tac-loading">Loading tactics…</div>';
+  try {
+    const r = await fetch('./data/tactics_gallery_file.json');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const json = await r.json();
+    _tactics.data = Array.isArray(json) ? json : (json.tactics || []);
+  } catch (e) {
+    root.innerHTML = `<div class="tac-loading">
+      Could not load <code>data/tactics_gallery_file.json</code>.<br>
+      Add the file to the <code>/data/</code> folder and redeploy.<br>
+      <small style="opacity:0.6">${e.message}</small>
+    </div>`;
+    return;
+  }
+  if (!_tactics.data.length) {
+    root.innerHTML = '<div class="tac-loading">No tactics found in data file.</div>';
+    return;
+  }
+  _render();
+  _select(0);
+}
+
+// ── Render shell ────────────────────────────────────────────────────────────
+function _render() {
+  const n = _tactics.data.length;
+  document.getElementById('tactics-root').innerHTML = `
+    <div class="tac-topbar">
+      <div class="tac-brandmark">
+        <span class="tac-dot"></span>
+        <span class="tac-label">AI/LLM Threat Library · ATLAS Tactics Gallery</span>
+      </div>
+      <div class="tac-crumbs">
+        <span>Library</span><span class="tac-sep">/</span>
+        <span>ATLAS</span><span class="tac-sep">/</span>
+        <span class="tac-now">Tactics</span>
+      </div>
+    </div>
+    <header class="tac-title-block">
+      <div>
+        <h1 class="tac-display">The <em>tactics</em> of the attack chain.</h1>
+        <p class="tac-lede">Sixteen MITRE ATLAS tactics radiate from the attack chain core. Each represents a phase of an adversary's engagement against an AI/LLM system.</p>
+      </div>
+      <div class="tac-meta">
+        <span class="tac-num">${String(n).padStart(2,'0')}</span>
+        Tactics<br>
+        <span style="color:var(--tac-ink-4)">ATLAS v4.0</span>
+      </div>
+    </header>
+    <div class="tac-step-head">
+      <span class="tac-step-num">Step 01</span>
+      <span class="tac-step-title">Click a tactic on the radial</span>
+      <span class="tac-step-hint">Hover to preview · click to focus</span>
+    </div>
+    <div class="tac-stage">
+      <div class="tac-panel tac-graph-panel">
+        <div class="tac-graph-head">
+          <h2 class="tac-gh-title">ATLAS Tactics</h2>
+          <span class="tac-gh-sub">${n} nodes</span>
+        </div>
+        <div class="tac-graph-wrap">
+          <svg class="tac-graph-svg" id="tac-graph-svg" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+      </div>
+      <div class="tac-panel tac-info-panel">
+        <div id="tac-info-content" style="height:100%;display:flex;flex-direction:column;"></div>
+      </div>
+    </div>`;
+  _buildGraph();
+  _bindKeyboard();
+}
+
+// ── Build radial SVG ────────────────────────────────────────────────────────
+function _buildGraph() {
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const W = 600, H = 600, cx = W/2, cy = H/2, baseR = 220;
+  const data = _tactics.data, n = data.length;
+  const svg = document.getElementById('tac-graph-svg');
+  svg.innerHTML = '';
+  const defs = document.createElementNS(SVG_NS,'defs');
+  defs.innerHTML = `<pattern id="tac-dotgrid" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.6" fill="#cfc7b3"/></pattern>`;
+  svg.appendChild(defs);
+  const bg = document.createElementNS(SVG_NS,'rect');
+  bg.setAttribute('x',0); bg.setAttribute('y',0); bg.setAttribute('width',W); bg.setAttribute('height',H); bg.setAttribute('fill','url(#tac-dotgrid)'); bg.setAttribute('opacity','0.5');
+  svg.appendChild(bg);
+  [baseR, baseR*0.66, baseR*0.33].forEach(r => {
+    const c = document.createElementNS(SVG_NS,'circle');
+    c.setAttribute('cx',cx); c.setAttribute('cy',cy); c.setAttribute('r',r); c.setAttribute('class','tac-ring');
+    svg.appendChild(c);
+  });
+  const nodes = data.map((tac,i) => {
+    const ang = -Math.PI/2 + (i * 2 * Math.PI / n);
+    return { ...tac, x: cx + Math.cos(ang)*baseR, y: cy + Math.sin(ang)*baseR, idx: i };
+  });
+  _tactics._linkEls = nodes.map(node => {
+    const line = document.createElementNS(SVG_NS,'line');
+    line.setAttribute('x1',cx); line.setAttribute('y1',cy); line.setAttribute('x2',node.x); line.setAttribute('y2',node.y); line.setAttribute('class','tac-node-link');
+    svg.appendChild(line); return line;
+  });
+  const cg = document.createElementNS(SVG_NS,'g');
+  cg.innerHTML = `<circle class="tac-center-circle" cx="${cx}" cy="${cy}" r="58"/><text class="tac-center-id" x="${cx}" y="${cy-18}">MITRE · ATLAS</text><text class="tac-center-name" x="${cx}" y="${cy+4}">Tactics</text><text class="tac-center-sub" x="${cx}" y="${cy+24}">v4.0 · ${n} nodes</text>`;
+  svg.appendChild(cg);
+  _tactics._leafEls = nodes.map(node => {
+    const g = document.createElementNS(SVG_NS,'g');
+    g.setAttribute('class','tac-leaf-group'); g.dataset.idx = node.idx;
+    const idShort = (node.id||'').replace('AML.','');
+    const nameLines = _tacWrapText(node.title||node.name||'', 16);
+    const nameY = node.y + (node.y > cy ? 38 : -32 - (nameLines.length-1)*12);
+    const tspans = nameLines.map((l,i) => `<tspan x="${node.x}" dy="${i===0?0:12}">${_tacEscape(l)}</tspan>`).join('');
+    g.innerHTML = `<circle class="tac-leaf-circle" cx="${node.x}" cy="${node.y}" r="22"/><text class="tac-leaf-id" x="${node.x}" y="${node.y}">${_tacEscape(idShort)}</text><text class="tac-leaf-name" y="${nameY}">${tspans}</text>`;
+    g.addEventListener('click', () => _select(node.idx));
+    svg.appendChild(g); return g;
+  });
+}
+
+// ── Info card ───────────────────────────────────────────────────────────────
+function _select(idx) {
+  _tactics.current = idx;
+  const data = _tactics.data, n = data.length;
+  (_tactics._leafEls||[]).forEach((el,i) => el.classList.toggle('is-active', i===idx));
+  (_tactics._linkEls||[]).forEach((el,i) => el.classList.toggle('is-active', i===idx));
+  const tac = data[idx];
+  const desc = (tac.how_question?.description||[]).map(p => `<li>${_tacEscape(p)}</li>`).join('');
+  document.getElementById('tac-info-content').innerHTML = `
+    <div class="tac-info-head tac-fade-in">
+      <div class="tac-info-eyebrow">
+        <span class="tac-pill tac-id-pill">${_tacEscape(tac.id||'')}</span>
+        <span class="tac-pill"><span class="tac-pdot"></span>Tactic ${String(idx+1).padStart(2,'0')} of ${String(n).padStart(2,'0')}</span>
+      </div>
+      <h2 class="tac-info-title">${_tacEscape(tac.title||tac.name||'')}</h2>
+      <p class="tac-info-blurb">${_tacEscape(tac.adversary_attempting||'')}</p>
+    </div>
+    <div class="tac-info-body tac-fade-in">
+      <div class="tac-section">
+        <div class="tac-sec-label">The how-question</div>
+        <h3 class="tac-sec-h">${_tacEscape(tac.how_question?.prompt||'')}</h3>
+      </div>
+      <div class="tac-section">
+        <div class="tac-sec-label">In practice</div>
+        <ul class="tac-bullets">${desc}</ul>
+      </div>
+    </div>
+    <div class="tac-info-foot">
+      <div class="tac-meta-line">${_tacEscape(tac.id||'')} · ATLAS v4.0</div>
+      <div class="tac-nav-btns">
+        <button class="tac-nav-btn" id="tac-nav-prev">← Prev</button>
+        <button class="tac-nav-btn" id="tac-nav-next">Next →</button>
+      </div>
+    </div>`;
+  document.getElementById('tac-nav-prev').addEventListener('click', () => _select((idx-1+n)%n));
+  document.getElementById('tac-nav-next').addEventListener('click', () => _select((idx+1)%n));
+}
+
+function _bindKeyboard() {
+  if (_tactics._kbBound) return;
+  _tactics._kbBound = true;
+  document.addEventListener('keydown', e => {
+    if (_tactics.current == null || !_tactics.data) return;
+    const n = _tactics.data.length;
+    if (e.key === 'ArrowLeft')  _select((_tactics.current-1+n)%n);
+    if (e.key === 'ArrowRight') _select((_tactics.current+1)%n);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
