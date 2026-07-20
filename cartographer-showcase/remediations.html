@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remediation Atlas — Cartographer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f4f0e8; color: #1a1916; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.55; background-image: radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%), radial-gradient(circle at 90% 110%, rgba(0,0,0,0.025), transparent 50%); }
+  .page-bar { position: sticky; top: 0; z-index: 200; background: rgba(244,240,232,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid #d6cfbf; padding: 0 28px; height: 48px; display: flex; align-items: center; gap: 14px; }
+  .back-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #6b655a; text-decoration: none; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid #d6cfbf; background: transparent; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+  .back-btn:hover { color: #1a1916; border-color: #1a1916; background: rgba(26,25,22,0.04); }
+  .page-bar-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #948c7d; }
+
+  /* Original CSS from _remInjectCss() — verbatim */
+  #s-remediation{ --rem-paper:#f4f0e8; --rem-paper-2:#ebe6dc; --rem-paper-3:#e3ddd0; --rem-ink:#1a1916; --rem-ink-2:#3a352d; --rem-ink-3:#6b655a; --rem-ink-4:#948c7d; --rem-rule:#d6cfbf; --rem-rule-soft:#e0d9c8; --rem-accent: oklch(0.55 0.06 195); --rem-warn-low:oklch(0.62 0.08 145); --rem-warn-med:oklch(0.68 0.10 75); --rem-warn-high:oklch(0.58 0.13 35); --rem-warn-crit:oklch(0.50 0.16 25); --rem-shadow-card: 0 1px 0 rgba(26,25,22,0.04), 0 24px 48px -28px rgba(26,25,22,0.18), 0 4px 12px -4px rgba(26,25,22,0.06); --rem-r-lg:14px; --rem-r-md:10px; --rem-r-sm:6px; background:var(--rem-paper); color:var(--rem-ink); font-family:'IBM Plex Sans', system-ui, sans-serif; font-size:15px; line-height:1.55; background-image: radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%), radial-gradient(circle at 90% 110%, rgba(0,0,0,0.025), transparent 50%); }
+  #s-remediation, #s-remediation *{ box-sizing:border-box; }
+  #s-remediation .rem-shell{ max-width:1280px; margin:0 auto; padding:56px 48px 96px; }
+  #s-remediation .rem-loading{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--rem-ink-3); padding:80px 0; text-align:center; line-height:1.8; }
+  #s-remediation .rem-topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; }
+  #s-remediation .rem-brandmark{ display:flex; align-items:center; gap:12px; }
+  #s-remediation .rem-dot{ width:10px; height:10px; border-radius:50%; background:var(--rem-accent); box-shadow:0 0 0 4px color-mix(in oklch, var(--rem-accent), transparent 80%); }
+  #s-remediation .rem-label, #s-remediation .rem-crumbs{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--rem-ink-3); }
+  #s-remediation .rem-crumbs .rem-sep{ margin:0 8px; opacity:0.5; }
+  #s-remediation .rem-crumbs .rem-now{ color:var(--rem-ink-2); }
+  #s-remediation .rem-title-block{ display:grid; grid-template-columns:1fr auto; gap:32px; align-items:end; padding-bottom:28px; border-bottom:1px solid var(--rem-rule); margin-bottom:36px; }
+  #s-remediation .rem-display{ font-family:'Instrument Serif', Georgia, serif; font-weight:400; font-size:64px; line-height:0.95; letter-spacing:-0.01em; margin:0 0 14px; }
+  #s-remediation .rem-display em{ font-style:italic; color:var(--rem-ink-2); }
+  #s-remediation .rem-lede{ max-width:56ch; color:var(--rem-ink-2); font-size:16px; line-height:1.6; margin:0; }
+  #s-remediation .rem-meta{ text-align:right; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--rem-ink-3); line-height:1.8; }
+  #s-remediation .rem-num{ font-family:'Instrument Serif', Georgia, serif; font-size:40px; color:var(--rem-ink); letter-spacing:0; text-transform:none; display:block; line-height:1; margin-bottom:4px; }
+  #s-remediation .rem-step-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:18px; }
+  #s-remediation .rem-step-num{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--rem-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-remediation .rem-step-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; color:var(--rem-ink); font-weight:400; }
+  #s-remediation .rem-step-hint{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--rem-ink-4); letter-spacing:0.08em; text-transform:uppercase; }
+  #s-remediation .rem-picker{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:56px; }
+  #s-remediation .rem-tile{ position:relative; background:var(--rem-paper-2); border:1px solid var(--rem-rule); border-radius:var(--rem-r-md); padding:18px 18px 20px; text-align:left; cursor:pointer; font:inherit; color:inherit; transition:transform 0.25s cubic-bezier(.2,.7,.2,1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease; min-height:132px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; }
+  #s-remediation .rem-tile:hover{ background:#f7f3eb; border-color:#c9c0ac; transform:translateY(-2px); box-shadow:0 12px 28px -18px rgba(26,25,22,0.25); }
+  #s-remediation .rem-tile.active{ background:var(--rem-ink); border-color:var(--rem-ink); color:var(--rem-paper); }
+  #s-remediation .rem-tile.active .rem-tile-id{ color:rgba(244,240,232,0.6); }
+  #s-remediation .rem-tile.active .rem-tile-title{ color:var(--rem-paper); }
+  #s-remediation .rem-tile.active .rem-tile-corner{ color:rgba(244,240,232,0.5); }
+  #s-remediation .rem-tile-id{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--rem-ink-3); }
+  #s-remediation .rem-tile-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; line-height:1.05; letter-spacing:-0.01em; margin-top:auto; }
+  #s-remediation .rem-tile-corner{ position:absolute; top:16px; right:16px; font-family:'Instrument Serif', Georgia, serif; font-size:28px; color:var(--rem-ink-4); line-height:1; }
+  #s-remediation .rem-stage{ position:relative; height:720px; perspective:1400px; }
+  #s-remediation .rem-panel{ position:absolute; top:0; width:calc(50% - 12px); height:100%; background:#fbf8f1; border:1px solid var(--rem-rule); border-radius:var(--rem-r-lg); box-shadow:var(--rem-shadow-card); transition:transform 0.65s cubic-bezier(.65,.0,.15,1), opacity 0.45s ease, left 0.65s cubic-bezier(.65,.0,.15,1); overflow:hidden; }
+  #s-remediation .rem-info{ left:25%; }
+  #s-remediation .rem-mitig{ left:calc(50% + 12px); opacity:0; pointer-events:none; transform:translateX(20px); }
+  #s-remediation .rem-stage.expanded .rem-info{ left:0; }
+  #s-remediation .rem-stage.expanded .rem-mitig{ opacity:1; pointer-events:auto; transform:translateX(0); }
+  #s-remediation .rem-stage.empty .rem-info{ background:transparent; border:1px dashed var(--rem-rule); box-shadow:none; }
+  #s-remediation .rem-info-empty{ height:100%; display:flex; align-items:center; justify-content:center; color:var(--rem-ink-4); font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; }
+  #s-remediation .rem-info-inner{ height:100%; display:flex; flex-direction:column; overflow:hidden; }
+  #s-remediation .rem-info-head{ padding:28px 32px 22px; border-bottom:1px solid var(--rem-rule-soft); background:linear-gradient(180deg, #fdfaf3, #fbf8f1); }
+  #s-remediation .rem-info-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  #s-remediation .rem-pill{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--rem-ink-3); padding:4px 10px; border:1px solid var(--rem-rule); border-radius:999px; background:var(--rem-paper); }
+  #s-remediation .rem-pill .rem-pdot{ width:6px; height:6px; border-radius:50%; background:var(--rem-accent); }
+  #s-remediation .rem-info-title{ font-family:'Instrument Serif', Georgia, serif; font-size:34px; line-height:1.05; letter-spacing:-0.01em; margin:0 0 10px; }
+  #s-remediation .rem-info-blurb{ color:var(--rem-ink-2); font-size:14.5px; line-height:1.6; max-width:56ch; margin:0; }
+  #s-remediation .rem-info-body{ flex:1; overflow-y:auto; padding:26px 32px 28px; scrollbar-width:thin; scrollbar-color:var(--rem-rule) transparent; }
+  #s-remediation .rem-info-body::-webkit-scrollbar{ width:8px; }
+  #s-remediation .rem-info-body::-webkit-scrollbar-thumb{ background:var(--rem-rule); border-radius:4px; }
+  #s-remediation .rem-section{ margin-bottom:26px; }
+  #s-remediation .rem-section:last-child{ margin-bottom:0; }
+  #s-remediation .rem-sec-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--rem-ink-3); margin-bottom:8px; }
+  #s-remediation .rem-sec-h{ font-family:'Instrument Serif', Georgia, serif; font-size:20px; line-height:1.2; margin:0 0 10px; color:var(--rem-ink); }
+  #s-remediation .rem-sec-h em{ font-style:italic; color:var(--rem-ink-2); }
+  #s-remediation .rem-sec-body{ color:var(--rem-ink-2); font-size:14.5px; line-height:1.65; }
+  #s-remediation .rem-sec-body p{ margin:0 0 8px; }
+  #s-remediation .rem-sec-body p:last-child{ margin-bottom:0; }
+  #s-remediation ul.rem-bullets{ list-style:none; padding:0; margin:0; counter-reset:remli; }
+  #s-remediation ul.rem-bullets li{ position:relative; padding:10px 0 10px 26px; border-top:1px solid var(--rem-rule-soft); color:var(--rem-ink-2); font-size:14.5px; line-height:1.55; }
+  #s-remediation ul.rem-bullets li:first-child{ border-top:none; padding-top:4px; }
+  #s-remediation ul.rem-bullets li::before{ content:counter(remli, decimal-leading-zero); counter-increment:remli; position:absolute; left:0; top:12px; font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--rem-ink-4); letter-spacing:0.08em; }
+  #s-remediation ul.rem-bullets li:first-child::before{ top:6px; }
+  #s-remediation .rem-diff-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  #s-remediation .rem-diff-chip{ display:inline-flex; align-items:center; gap:8px; padding:5px 11px 5px 9px; border-radius:999px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#fff; background:var(--rem-ink); }
+  #s-remediation .rem-diff-chip .rem-swatch{ width:8px; height:8px; border-radius:50%; background:#fff; }
+  #s-remediation .rem-diff-low{ background:var(--rem-warn-low); }
+  #s-remediation .rem-diff-med{ background:var(--rem-warn-med); color:#2a1f0a; }
+  #s-remediation .rem-diff-high{ background:var(--rem-warn-high); }
+  #s-remediation .rem-diff-crit{ background:var(--rem-warn-crit); }
+  #s-remediation .rem-info-foot{ border-top:1px solid var(--rem-rule-soft); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--rem-paper-2); }
+  #s-remediation .rem-meta-line{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--rem-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-remediation .rem-btn-toggle{ display:inline-flex; align-items:center; gap:10px; background:var(--rem-ink); color:var(--rem-paper); border:1px solid var(--rem-ink); border-radius:999px; padding:10px 18px; font:500 12px/1 'IBM Plex Sans', sans-serif; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:background 0.2s, transform 0.2s, padding 0.3s; }
+  #s-remediation .rem-btn-toggle:hover{ background:#2c2922; }
+  #s-remediation .rem-btn-toggle:active{ transform:translateY(1px); }
+  #s-remediation .rem-btn-toggle .rem-arrow{ transition:transform 0.4s cubic-bezier(.65,.0,.15,1); display:inline-block; }
+  #s-remediation .rem-stage.expanded .rem-btn-toggle .rem-arrow{ transform:rotate(180deg); }
+  #s-remediation .rem-btn-toggle .rem-count{ font-family:'IBM Plex Mono', monospace; font-size:10px; background:rgba(244,240,232,0.16); padding:3px 7px; border-radius:999px; letter-spacing:0.06em; }
+  #s-remediation .rem-mitig-inner{ height:100%; display:flex; flex-direction:column; }
+  #s-remediation .rem-mitig-head{ padding:28px 32px 18px; border-bottom:1px solid var(--rem-rule-soft); }
+  #s-remediation .rem-mitig-eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--rem-ink-3); margin-bottom:6px; }
+  #s-remediation .rem-mitig-title{ font-family:'Instrument Serif', Georgia, serif; font-size:26px; margin:0; line-height:1.1; }
+  #s-remediation .rem-mitig-sub{ color:var(--rem-ink-3); font-size:13px; margin-top:6px; }
+  #s-remediation .rem-radial-wrap{ flex:1; position:relative; min-height:320px; }
+  #s-remediation .rem-radial-svg{ width:100%; height:100%; display:block; }
+  #s-remediation .rem-mitig-list{ border-top:1px solid var(--rem-rule-soft); padding:16px 32px 22px; max-height:220px; overflow-y:auto; }
+  #s-remediation .rem-mitig-list h4{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--rem-ink-3); margin:0 0 10px; font-weight:500; }
+  #s-remediation .rem-mitig-list ol{ list-style:none; padding:0; margin:0; display:grid; grid-template-columns:1fr 1fr; gap:4px 18px; }
+  #s-remediation .rem-mitig-list li{ display:grid; grid-template-columns:88px 1fr; gap:10px; padding:7px 0; border-top:1px solid var(--rem-rule-soft); align-items:baseline; cursor:pointer; transition:background 0.15s; }
+  #s-remediation .rem-mitig-list li:first-child, #s-remediation .rem-mitig-list li:nth-child(2){ border-top:none; }
+  #s-remediation .rem-mitig-list li .rem-mid{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--rem-ink-3); letter-spacing:0.04em; }
+  #s-remediation .rem-mitig-list li .rem-mid.none{ color:var(--rem-ink-4); font-style:italic; }
+  #s-remediation .rem-mitig-list li .rem-mname{ font-size:13.5px; color:var(--rem-ink); line-height:1.35; }
+  #s-remediation .rem-mitig-list li:hover .rem-mname{ color:var(--rem-accent); }
+  #s-remediation .rem-node-link{ stroke:var(--rem-rule); stroke-width:1; fill:none; transition:stroke 0.25s, stroke-width 0.25s; }
+  #s-remediation .rem-node-link.is-hot{ stroke:var(--rem-accent); stroke-width:1.6; }
+  #s-remediation .rem-leaf-circle{ fill:var(--rem-paper); stroke:var(--rem-ink-3); stroke-width:1; transition:fill 0.2s, stroke 0.2s; }
+  #s-remediation .rem-leaf-group{ cursor:pointer; }
+  #s-remediation .rem-leaf-group:hover .rem-leaf-circle, #s-remediation .rem-leaf-group.is-hot .rem-leaf-circle{ fill:var(--rem-ink); stroke:var(--rem-ink); }
+  #s-remediation .rem-leaf-group:hover .rem-leaf-id, #s-remediation .rem-leaf-group.is-hot .rem-leaf-id{ fill:var(--rem-paper); }
+  #s-remediation .rem-leaf-group:hover .rem-leaf-name, #s-remediation .rem-leaf-group.is-hot .rem-leaf-name{ fill:var(--rem-ink); font-weight:500; }
+  #s-remediation .rem-leaf-id{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; fill:var(--rem-ink-2); text-anchor:middle; dominant-baseline:central; letter-spacing:0.04em; pointer-events:none; }
+  #s-remediation .rem-leaf-name{ font-family:'IBM Plex Sans', sans-serif; font-size:11px; fill:var(--rem-ink-3); text-anchor:middle; pointer-events:none; }
+  #s-remediation .rem-center-circle{ fill:var(--rem-ink); stroke:var(--rem-ink); }
+  #s-remediation .rem-center-id, #s-remediation .rem-center-name{ text-anchor:middle; pointer-events:none; fill:var(--rem-paper); }
+  #s-remediation .rem-center-id{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; opacity:0.65; }
+  #s-remediation .rem-center-name{ font-family:'Instrument Serif', Georgia, serif; font-size:17px; }
+  #s-remediation .rem-fade-in{ animation:remFadeUp 0.5s 0.1s both ease-out; }
+  @keyframes remFadeUp{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+  @media (max-width:980px){ #s-remediation .rem-shell{ padding:32px 20px 60px; } #s-remediation .rem-display{ font-size:44px; } #s-remediation .rem-picker{ grid-template-columns:repeat(2,1fr); } #s-remediation .rem-stage{ height:auto; } #s-remediation .rem-panel{ position:relative; width:100%; height:auto; } #s-remediation .rem-info{ left:0; } #s-remediation .rem-mitig{ left:0; margin-top:16px; transform:none; } #s-remediation .rem-stage:not(.expanded) .rem-mitig{ display:none; } }
+</style>
+</head>
+<body>
+
+<div class="page-bar">
+  <a href="index.html" class="back-btn">← Showcase</a>
+  <span class="page-bar-title">Remediation Atlas · Fault Localization</span>
+</div>
+
+<div id="s-remediation">
+  <div class="rem-shell">
+    <div id="remediation-root"></div>
+  </div>
+</div>
+
+<script>
+const _REM_SHORT = { 1:'System Monitoring', 2:'Model Hardening', 3:'Input Sanitization', 4:'Process Sanitization', 5:'Output Sanitization' };
+const _remediation = { data: null, current: null, expanded: false };
+
+function _remEscape(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function _remPad(n){ return n<10?'0'+n:''+n; }
+function _remWrapText(str,maxChars,maxLines=3){ const words=String(str).split(/\s+/); const lines=[]; let cur=''; for(const w of words){ if((cur+' '+w).trim().length>maxChars){ if(cur)lines.push(cur); cur=w; }else{ cur=(cur+' '+w).trim(); } } if(cur)lines.push(cur); return lines.slice(0,maxLines); }
+function _remParseDifficulty(str){ const head=String(str||'').split('—')[0].trim().toLowerCase(); let level='med',label='Medium'; if(head.includes('critical')){ level='crit';label='Critical'; }else if(head.includes('high')){ level='high';label='High'; }else if(head.includes('low to medium')||head.includes('low–medium')||head.includes('low-medium')){ level='med';label='Low → Medium'; }else if(head.includes('low')){ level='low';label='Low'; }else if(head.includes('medium')){ level='med';label='Medium'; } const tail=String(str||'').split('—').slice(1).join('—').trim(); return{level,label,body:tail}; }
+
+async function init(){
+  const root = document.getElementById('remediation-root');
+  root.innerHTML = '<div class="rem-loading">Loading remediation categories…</div>';
+  try {
+    const r = await fetch('./data/remediation_categories.json');
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const json = await r.json();
+    _remediation.data = Array.isArray(json)?json:(json.categories||[]);
+  } catch(e) {
+    root.innerHTML = `<div class="rem-loading">Could not load <code>data/remediation_categories.json</code>.<br>Add the file to the <code>/data/</code> folder and redeploy.<br><small style="opacity:0.6">${e.message}</small></div>`;
+    return;
+  }
+  if(!_remediation.data.length){ root.innerHTML='<div class="rem-loading">No categories found in data file.</div>'; return; }
+  _render();
+  _select(1);
+}
+
+function _render(){
+  const data = _remediation.data;
+  const tiles = data.map(cat=>`<button class="rem-tile" data-id="${cat.remediation_id}"><div><div class="rem-tile-id">Cat · ${_remPad(cat.remediation_id)}</div></div><div class="rem-tile-corner">${cat.remediation_id}</div><div class="rem-tile-title">${_remEscape(_REM_SHORT[cat.remediation_id]||cat.title)}</div></button>`).join('');
+  document.getElementById('remediation-root').innerHTML = `
+    <div class="rem-topbar">
+      <div class="rem-brandmark"><span class="rem-dot"></span><span class="rem-label">AI/LLM Threat Library · Remediation Atlas</span></div>
+      <div class="rem-crumbs"><span>Library</span><span class="rem-sep">/</span><span>Remediations</span><span class="rem-sep">/</span><span class="rem-now">Categories</span></div>
+    </div>
+    <header class="rem-title-block">
+      <div>
+        <h1 class="rem-display">Five categories of <em>remediation</em>.</h1>
+        <p class="rem-lede">Every threat surfaced in the library maps to one of five fault-localization categories. Pick a category to read its rationale, see how to remediate, and trace the mitigations associated with it.</p>
+      </div>
+      <div class="rem-meta"><span class="rem-num">${_remPad(data.length)}</span>Categories<br><span style="color:var(--rem-ink-4)">Fault Localization</span></div>
+    </header>
+    <div class="rem-step-head"><span class="rem-step-num">Step 01</span><span class="rem-step-title">Pick a category</span><span class="rem-step-hint">${data.length} available</span></div>
+    <div class="rem-picker" id="rem-picker">${tiles}</div>
+    <div class="rem-step-head"><span class="rem-step-num">Step 02</span><span class="rem-step-title">Review the info card</span><span class="rem-step-hint">Toggle mitigations to expand</span></div>
+    <div class="rem-stage rem-stage--empty" id="rem-stage">
+      <div class="rem-panel rem-info" id="rem-info-panel"><div class="rem-info-empty">Select a category to begin</div></div>
+      <div class="rem-panel rem-mitig" id="rem-mitig-panel"><div class="rem-mitig-inner" id="rem-mitig-inner"></div></div>
+    </div>`;
+  document.querySelectorAll('.rem-tile').forEach(btn=>btn.addEventListener('click',()=>_select(+btn.dataset.id)));
+}
+
+function _select(id){
+  if(_remediation.current!==id){ _remediation.expanded=false; document.getElementById('rem-stage')?.classList.remove('expanded'); }
+  _remediation.current=id;
+  document.getElementById('rem-stage')?.classList.remove('rem-stage--empty');
+  document.querySelectorAll('.rem-tile').forEach(t=>t.classList.toggle('active',+t.dataset.id===id));
+  const cat=_remediation.data.find(c=>c.remediation_id===id);
+  if(!cat)return;
+  _renderInfo(cat);
+  _renderMitigations(cat);
+}
+
+function _renderInfo(cat){
+  const d=_remParseDifficulty(cat.remediation_difficulty);
+  const why=(cat.why_remediate||[]).map(p=>`<p>${_remEscape(p)}</p>`).join('');
+  const how=(cat.how_to_remediate||[]).map(p=>`<li>${_remEscape(p)}</li>`).join('');
+  const shortName=_REM_SHORT[cat.remediation_id]||cat.title;
+  const mitCount=(cat.associated_mitigations||[]).length;
+  const total=_remediation.data.length;
+  document.getElementById('rem-info-panel').innerHTML=`
+    <div class="rem-info-inner rem-fade-in">
+      <div class="rem-info-head">
+        <div class="rem-info-eyebrow">
+          <span class="rem-pill"><span class="rem-pdot"></span>Category ${_remPad(cat.remediation_id)} of ${_remPad(total)}</span>
+          <span class="rem-pill" style="background:transparent;">${mitCount} mitigations</span>
+        </div>
+        <h2 class="rem-info-title">${_remEscape(cat.title)}</h2>
+        <p class="rem-info-blurb">${_remEscape(cat.what_are_these_remediations||'')}</p>
+      </div>
+      <div class="rem-info-body">
+        <div class="rem-section">
+          <div class="rem-sec-label">Rationale</div>
+          <h3 class="rem-sec-h">Why would we remediate <em>${_remEscape(shortName)}</em>?</h3>
+          <div class="rem-sec-body">${why}</div>
+        </div>
+        <div class="rem-section">
+          <div class="rem-sec-label">Approach</div>
+          <h3 class="rem-sec-h">How could we remediate <em>${_remEscape(shortName)}</em> faults?</h3>
+          <div class="rem-sec-body"><ul class="rem-bullets">${how}</ul></div>
+        </div>
+        <div class="rem-section">
+          <div class="rem-sec-label">Effort</div>
+          <div class="rem-diff-row"><h3 class="rem-sec-h" style="margin:0;">Remediation difficulty</h3><span class="rem-diff-chip rem-diff-${d.level}"><span class="rem-swatch"></span>${_remEscape(d.label)}</span></div>
+          <div class="rem-sec-body"><p>${_remEscape(d.body)}</p></div>
+        </div>
+      </div>
+      <div class="rem-info-foot">
+        <div class="rem-meta-line">ID · CAT-${_remPad(cat.remediation_id)} · ${mitCount} linked</div>
+        <button class="rem-btn-toggle" id="rem-btn-toggle">
+          <span class="rem-label-text">${_remediation.expanded?'Hide mitigations':'Show mitigations'}</span>
+          <span class="rem-count">${mitCount}</span><span class="rem-arrow">→</span>
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('rem-btn-toggle').addEventListener('click',()=>{
+    _remediation.expanded=document.getElementById('rem-stage').classList.toggle('expanded');
+    const btn=document.getElementById('rem-btn-toggle');
+    if(btn) btn.querySelector('.rem-label-text').textContent=_remediation.expanded?'Hide mitigations':'Show mitigations';
+  });
+}
+
+function _renderMitigations(cat){
+  const W=560,H=460,cx=W/2,cy=H/2-10;
+  const items=cat.associated_mitigations||[];
+  const n=items.length;
+  const baseR=Math.min(W,H)*0.36;
+  const nodes=items.map((m,i)=>{ const ang=-Math.PI/2+(i*2*Math.PI/Math.max(n,1)); return{...m,x:cx+Math.cos(ang)*baseR,y:cy+Math.sin(ang)*baseR,idx:i}; });
+  const links=nodes.map(node=>`<line class="rem-node-link" data-idx="${node.idx}" x1="${cx}" y1="${cy}" x2="${node.x}" y2="${node.y}"/>`).join('');
+  const leaves=nodes.map(node=>{ const idText=node.id?node.id.replace('AML.',''):'—'; const nameLines=_remWrapText(node.name,18,3); const nameY=node.y+38; const tspans=nameLines.map((l,i)=>`<tspan x="${node.x}" dy="${i===0?0:13}">${_remEscape(l)}</tspan>`).join(''); return`<g class="rem-leaf-group" data-idx="${node.idx}"><circle class="rem-leaf-circle" cx="${node.x}" cy="${node.y}" r="26"/><text class="rem-leaf-id" x="${node.x}" y="${node.y}">${_remEscape(idText)}</text><text class="rem-leaf-name" y="${nameY}">${tspans}</text></g>`; }).join('');
+  const shortName=_REM_SHORT[cat.remediation_id]||cat.title;
+  const centerName=_remWrapText(shortName,14,2).map((l,i)=>`<tspan x="${cx}" dy="${i===0?0:19}">${_remEscape(l)}</tspan>`).join('');
+  document.getElementById('rem-mitig-inner').innerHTML=`
+    <div class="rem-mitig-head rem-fade-in">
+      <div class="rem-mitig-eyebrow">Associated mitigations · radial map</div>
+      <h2 class="rem-mitig-title">${_remEscape(cat.title)}</h2>
+      <div class="rem-mitig-sub">${n} mitigation${n===1?'':'s'} radiate from this fault-localization category.</div>
+    </div>
+    <div class="rem-radial-wrap rem-fade-in">
+      <svg class="rem-radial-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+        <defs><pattern id="rem-dg-${cat.remediation_id}" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.6" fill="#cfc7b3"/></pattern></defs>
+        <rect x="0" y="0" width="${W}" height="${H}" fill="url(#rem-dg-${cat.remediation_id})" opacity="0.5"/>
+        <circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="var(--rem-rule)" stroke-dasharray="2 4"/>
+        ${links}
+        <g><circle class="rem-center-circle" cx="${cx}" cy="${cy}" r="50"/><text class="rem-center-id" x="${cx}" y="${cy-12}">CAT · ${_remPad(cat.remediation_id)}</text><text class="rem-center-name" x="${cx}" y="${cy+8}">${centerName}</text></g>
+        ${leaves}
+      </svg>
+    </div>
+    <div class="rem-mitig-list"><h4>Mitigations index</h4><ol>${items.map((m,i)=>`<li data-idx="${i}"><span class="rem-mid ${m.id?'':'none'}">${m.id?_remEscape(m.id):'no ID'}</span><span class="rem-mname">${_remEscape(m.name)}</span></li>`).join('')}</ol></div>`;
+  const inner=document.getElementById('rem-mitig-inner');
+  const linkEls=inner.querySelectorAll('.rem-node-link');
+  const leafEls=inner.querySelectorAll('.rem-leaf-group');
+  const listEls=inner.querySelectorAll('.rem-mitig-list li');
+  function setHot(idx,on){ if(idx==null)return; linkEls[idx]?.classList.toggle('is-hot',on); leafEls[idx]?.classList.toggle('is-hot',on); if(listEls[idx])listEls[idx].style.background=on?'rgba(0,0,0,0.04)':''; }
+  leafEls.forEach((el,i)=>{ el.addEventListener('mouseenter',()=>setHot(i,true)); el.addEventListener('mouseleave',()=>setHot(i,false)); });
+  listEls.forEach((el,i)=>{ el.addEventListener('mouseenter',()=>setHot(i,true)); el.addEventListener('mouseleave',()=>setHot(i,false)); });
+}
+
+init();
+</script>
+</body>
+</html>

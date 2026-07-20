@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Severity Atlas — Cartographer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f4f0e8; color: #1a1916; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.55; background-image: radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%), radial-gradient(circle at 90% 110%, rgba(0,0,0,0.025), transparent 50%); }
+  .page-bar { position: sticky; top: 0; z-index: 200; background: rgba(244,240,232,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid #d6cfbf; padding: 0 28px; height: 48px; display: flex; align-items: center; gap: 14px; }
+  .back-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #6b655a; text-decoration: none; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid #d6cfbf; background: transparent; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+  .back-btn:hover { color: #1a1916; border-color: #1a1916; background: rgba(26,25,22,0.04); }
+  .page-bar-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #948c7d; }
+
+  /* Original CSS from _sevInjectCss() */
+  #s-severity{ --sev-paper:#f4f0e8; --sev-paper-2:#ebe6dc; --sev-paper-3:#e3ddd0; --sev-ink:#1a1916; --sev-ink-2:#3a352d; --sev-ink-3:#6b655a; --sev-ink-4:#948c7d; --sev-rule:#d6cfbf; --sev-rule-soft:#e0d9c8; --sev-accent:oklch(0.55 0.06 195); --sev-low-color:oklch(0.62 0.08 145); --sev-med-color:oklch(0.68 0.10 75); --sev-high-color:oklch(0.58 0.13 35); --sev-crit-color:oklch(0.50 0.16 25); --sev-shadow-card:0 1px 0 rgba(26,25,22,0.04), 0 24px 48px -28px rgba(26,25,22,0.18), 0 4px 12px -4px rgba(26,25,22,0.06); --sev-r-lg:14px; --sev-r-md:10px; background:var(--sev-paper); color:var(--sev-ink); font-family:'IBM Plex Sans', system-ui, sans-serif; font-size:15px; line-height:1.55; background-image:radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%), radial-gradient(circle at 90% 110%, rgba(0,0,0,0.025), transparent 50%); }
+  #s-severity, #s-severity *{ box-sizing:border-box; }
+  #s-severity .sev-shell{ max-width:1280px; margin:0 auto; padding:56px 48px 96px; }
+  #s-severity .sev-loading{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--sev-ink-3); padding:80px 0; text-align:center; line-height:1.8; }
+  #s-severity .sev-topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; }
+  #s-severity .sev-brandmark{ display:flex; align-items:center; gap:12px; }
+  #s-severity .sev-dot{ width:10px; height:10px; border-radius:50%; background:var(--sev-accent); box-shadow:0 0 0 4px color-mix(in oklch, var(--sev-accent), transparent 80%); }
+  #s-severity .sev-label, #s-severity .sev-crumbs{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--sev-ink-3); }
+  #s-severity .sev-crumbs .sev-sep{ margin:0 8px; opacity:0.5; }
+  #s-severity .sev-crumbs .sev-now{ color:var(--sev-ink-2); }
+  #s-severity .sev-title-block{ display:grid; grid-template-columns:1fr auto; gap:32px; align-items:end; padding-bottom:28px; border-bottom:1px solid var(--sev-rule); margin-bottom:36px; }
+  #s-severity .sev-display{ font-family:'Instrument Serif', Georgia, serif; font-weight:400; font-size:64px; line-height:0.95; letter-spacing:-0.01em; margin:0 0 14px; }
+  #s-severity .sev-display em{ font-style:italic; color:var(--sev-ink-2); }
+  #s-severity .sev-lede{ max-width:56ch; color:var(--sev-ink-2); font-size:16px; line-height:1.6; margin:0; }
+  #s-severity .sev-meta{ text-align:right; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--sev-ink-3); line-height:1.8; }
+  #s-severity .sev-num{ font-family:'Instrument Serif', Georgia, serif; font-size:40px; color:var(--sev-ink); letter-spacing:0; text-transform:none; display:block; line-height:1; margin-bottom:4px; }
+  #s-severity .sev-step-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:18px; }
+  #s-severity .sev-step-num{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--sev-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-severity .sev-step-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; }
+  #s-severity .sev-step-hint{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--sev-ink-4); letter-spacing:0.08em; text-transform:uppercase; }
+  #s-severity .sev-picker{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:56px; }
+  #s-severity .sev-tile{ position:relative; background:var(--sev-paper-2); border:1px solid var(--sev-rule); border-radius:var(--sev-r-md); padding:18px 18px 20px; text-align:left; cursor:pointer; font:inherit; color:inherit; transition:transform 0.25s cubic-bezier(.2,.7,.2,1), background 0.2s, border-color 0.2s, box-shadow 0.25s; min-height:148px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; }
+  #s-severity .sev-tile:hover{ background:#f7f3eb; border-color:#c9c0ac; transform:translateY(-2px); box-shadow:0 12px 28px -18px rgba(26,25,22,0.25); }
+  #s-severity .sev-tile.active{ background:var(--sev-ink); border-color:var(--sev-ink); color:var(--sev-paper); }
+  #s-severity .sev-tile.active .sev-tile-id{ color:rgba(244,240,232,0.6); }
+  #s-severity .sev-tile.active .sev-tile-title{ color:var(--sev-paper); }
+  #s-severity .sev-tile.active .sev-tile-corner{ color:rgba(244,240,232,0.5); }
+  #s-severity .sev-tile.active .sev-tile-sub{ color:rgba(244,240,232,0.65); }
+  #s-severity .sev-tile.active .sev-mark{ background:rgba(244,240,232,0.15); color:var(--sev-paper); border-color:transparent; }
+  #s-severity .sev-tile-id{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--sev-ink-3); }
+  #s-severity .sev-tile-title{ font-family:'Instrument Serif', Georgia, serif; font-size:22px; line-height:1.05; letter-spacing:-0.01em; margin-top:auto; }
+  #s-severity .sev-tile-sub{ font-size:12px; color:var(--sev-ink-3); margin-top:4px; }
+  #s-severity .sev-tile-corner{ position:absolute; top:16px; right:16px; font-family:'Instrument Serif', Georgia, serif; font-size:28px; color:var(--sev-ink-4); line-height:1; }
+  #s-severity .sev-mark{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; padding:3px 8px; border-radius:999px; border:1px solid var(--sev-rule); color:var(--sev-ink-3); align-self:flex-start; margin-top:10px; }
+  #s-severity .sev-mark .sev-swatch{ width:6px; height:6px; border-radius:50%; }
+  #s-severity .sev-mark.sev-low .sev-swatch{ background:var(--sev-low-color); }
+  #s-severity .sev-mark.sev-med .sev-swatch{ background:var(--sev-med-color); }
+  #s-severity .sev-mark.sev-high .sev-swatch{ background:var(--sev-high-color); }
+  #s-severity .sev-mark.sev-crit .sev-swatch{ background:var(--sev-crit-color); }
+  #s-severity .sev-stage{ position:relative; height:760px; perspective:1400px; }
+  #s-severity .sev-panel{ position:absolute; top:0; width:calc(50% - 12px); height:100%; background:#fbf8f1; border:1px solid var(--sev-rule); border-radius:var(--sev-r-lg); box-shadow:var(--sev-shadow-card); transition:transform 0.65s cubic-bezier(.65,.0,.15,1), opacity 0.45s ease, left 0.65s cubic-bezier(.65,.0,.15,1); overflow:hidden; }
+  #s-severity .sev-info{ left:25%; }
+  #s-severity .sev-graph{ left:calc(50% + 12px); opacity:0; pointer-events:none; transform:translateX(20px); }
+  #s-severity .sev-stage.expanded .sev-info{ left:0; }
+  #s-severity .sev-stage.expanded .sev-graph{ opacity:1; pointer-events:auto; transform:translateX(0); }
+  #s-severity .sev-stage.empty .sev-info{ background:transparent; border:1px dashed var(--sev-rule); box-shadow:none; }
+  #s-severity .sev-info-empty{ height:100%; display:flex; align-items:center; justify-content:center; color:var(--sev-ink-4); font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; }
+  #s-severity .sev-info-inner{ height:100%; display:flex; flex-direction:column; overflow:hidden; }
+  #s-severity .sev-info-head{ padding:28px 32px 22px; border-bottom:1px solid var(--sev-rule-soft); background:linear-gradient(180deg, #fdfaf3, #fbf8f1); }
+  #s-severity .sev-info-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  #s-severity .sev-pill{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--sev-ink-3); padding:4px 10px; border:1px solid var(--sev-rule); border-radius:999px; background:var(--sev-paper); }
+  #s-severity .sev-pill .sev-pdot{ width:6px; height:6px; border-radius:50%; background:var(--sev-accent); }
+  #s-severity .sev-info-title{ font-family:'Instrument Serif', Georgia, serif; font-size:32px; line-height:1.05; letter-spacing:-0.01em; margin:0 0 10px; }
+  #s-severity .sev-info-blurb{ color:var(--sev-ink-2); font-size:14.5px; line-height:1.6; max-width:56ch; margin:0; }
+  #s-severity .sev-info-blurb strong{ color:var(--sev-ink); font-weight:500; }
+  #s-severity .sev-info-body{ flex:1; overflow-y:auto; padding:26px 32px 28px; scrollbar-width:thin; scrollbar-color:var(--sev-rule) transparent; }
+  #s-severity .sev-info-body::-webkit-scrollbar{ width:8px; }
+  #s-severity .sev-info-body::-webkit-scrollbar-thumb{ background:var(--sev-rule); border-radius:4px; }
+  #s-severity .sev-section{ margin-bottom:28px; }
+  #s-severity .sev-section:last-child{ margin-bottom:0; }
+  #s-severity .sev-sec-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--sev-ink-3); margin-bottom:10px; }
+  #s-severity .sev-sec-h{ font-family:'Instrument Serif', Georgia, serif; font-size:20px; line-height:1.2; margin:0 0 10px; color:var(--sev-ink); }
+  #s-severity .sev-sec-h em{ font-style:italic; color:var(--sev-ink-2); }
+  #s-severity .sev-sec-body{ color:var(--sev-ink-2); font-size:14.5px; line-height:1.65; }
+  #s-severity .sev-sec-body p{ margin:0 0 8px; }
+  #s-severity .sev-sec-body p:last-child{ margin-bottom:0; }
+  #s-severity .sev-tactic-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+  #s-severity .sev-tactic-shape{ display:inline-flex; align-items:center; gap:8px; padding:6px 12px 6px 8px; border:1px solid var(--sev-rule); background:var(--sev-paper); color:var(--sev-ink); font-size:12.5px; line-height:1.2; transition:background 0.18s, border-color 0.18s, transform 0.18s; cursor:default; }
+  #s-severity .sev-tactic-shape:hover{ background:#f7f3eb; border-color:#b8ad95; transform:translateY(-1px); }
+  #s-severity .sev-tactic-shape.sev-shape-pill{ border-radius:999px; }
+  #s-severity .sev-tactic-shape.sev-shape-tag{ border-radius:4px 12px 12px 4px; }
+  #s-severity .sev-tactic-shape.sev-shape-square{ border-radius:4px; }
+  #s-severity .sev-tactic-shape.sev-shape-hex{ border-radius:2px; clip-path:polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%); padding-left:14px; padding-right:14px; }
+  #s-severity .sev-t-id{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--sev-ink-3); letter-spacing:0.06em; background:var(--sev-paper-2); padding:2px 6px; border-radius:3px; }
+  #s-severity .sev-tactic-shape.sev-shape-hex .sev-t-id{ background:transparent; padding:0; }
+  #s-severity .sev-t-id.sev-t-id-none{ color:var(--sev-ink-4); font-style:italic; }
+  #s-severity .sev-t-name{ font-weight:500; color:var(--sev-ink); }
+  #s-severity .sev-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  #s-severity .sev-chip{ display:inline-flex; align-items:center; gap:8px; padding:6px 14px 6px 10px; border-radius:999px; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#fff; font-weight:500; background:var(--sev-ink); }
+  #s-severity .sev-chip .sev-chip-swatch{ width:9px; height:9px; border-radius:50%; background:#fff; }
+  #s-severity .sev-chip.sev-low{ background:var(--sev-low-color); }
+  #s-severity .sev-chip.sev-med{ background:var(--sev-med-color); color:#2a1f0a; }
+  #s-severity .sev-chip.sev-high{ background:var(--sev-high-color); }
+  #s-severity .sev-chip.sev-crit{ background:var(--sev-crit-color); }
+  #s-severity ul.sev-bullets{ list-style:none; padding:0; margin:0; counter-reset:sevli; }
+  #s-severity ul.sev-bullets li{ position:relative; padding:10px 0 10px 26px; border-top:1px solid var(--sev-rule-soft); color:var(--sev-ink-2); font-size:14.5px; line-height:1.55; }
+  #s-severity ul.sev-bullets li:first-child{ border-top:none; padding-top:4px; }
+  #s-severity ul.sev-bullets li::before{ content:counter(sevli, decimal-leading-zero); counter-increment:sevli; position:absolute; left:0; top:12px; font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--sev-ink-4); letter-spacing:0.08em; }
+  #s-severity ul.sev-bullets li:first-child::before{ top:6px; }
+  #s-severity .sev-info-foot{ border-top:1px solid var(--sev-rule-soft); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--sev-paper-2); }
+  #s-severity .sev-meta-line{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--sev-ink-3); letter-spacing:0.14em; text-transform:uppercase; }
+  #s-severity .sev-btn-toggle{ display:inline-flex; align-items:center; gap:10px; background:var(--sev-ink); color:var(--sev-paper); border:1px solid var(--sev-ink); border-radius:999px; padding:10px 18px; font:500 12px/1 'IBM Plex Sans', sans-serif; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:background 0.2s, transform 0.2s; }
+  #s-severity .sev-btn-toggle:hover{ background:#2c2922; }
+  #s-severity .sev-btn-toggle:active{ transform:translateY(1px); }
+  #s-severity .sev-btn-toggle .sev-arrow{ transition:transform 0.4s cubic-bezier(.65,.0,.15,1); display:inline-block; }
+  #s-severity .sev-stage.expanded .sev-btn-toggle .sev-arrow{ transform:rotate(180deg); }
+  #s-severity .sev-btn-toggle .sev-count{ font-family:'IBM Plex Mono', monospace; font-size:10px; background:rgba(244,240,232,0.16); padding:3px 7px; border-radius:999px; letter-spacing:0.06em; }
+  #s-severity .sev-graph-inner{ height:100%; display:flex; flex-direction:column; }
+  #s-severity .sev-graph-head{ padding:28px 32px 18px; border-bottom:1px solid var(--sev-rule-soft); }
+  #s-severity .sev-graph-eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--sev-ink-3); margin-bottom:6px; }
+  #s-severity .sev-graph-title{ font-family:'Instrument Serif', Georgia, serif; font-size:26px; margin:0; line-height:1.1; }
+  #s-severity .sev-graph-sub{ color:var(--sev-ink-3); font-size:13px; margin-top:6px; }
+  #s-severity .sev-radial-wrap{ flex:1; position:relative; min-height:320px; }
+  #s-severity .sev-radial-svg{ width:100%; height:100%; display:block; }
+  #s-severity .sev-tactic-list{ border-top:1px solid var(--sev-rule-soft); padding:16px 32px 22px; max-height:240px; overflow-y:auto; }
+  #s-severity .sev-tactic-list h4{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--sev-ink-3); margin:0 0 10px; font-weight:500; }
+  #s-severity .sev-tactic-list ol{ list-style:none; padding:0; margin:0; display:grid; grid-template-columns:1fr 1fr; gap:4px 18px; }
+  #s-severity .sev-tactic-list li{ display:grid; grid-template-columns:88px 1fr; gap:10px; padding:7px 0; border-top:1px solid var(--sev-rule-soft); align-items:baseline; cursor:pointer; transition:background 0.15s; }
+  #s-severity .sev-tactic-list li:first-child, #s-severity .sev-tactic-list li:nth-child(2){ border-top:none; }
+  #s-severity .sev-tactic-list li .sev-tid{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--sev-ink-3); letter-spacing:0.04em; }
+  #s-severity .sev-tactic-list li .sev-tid.sev-tid-none{ color:var(--sev-ink-4); font-style:italic; }
+  #s-severity .sev-tactic-list li .sev-tname{ font-size:13.5px; color:var(--sev-ink); line-height:1.35; }
+  #s-severity .sev-tactic-list li:hover .sev-tname{ color:var(--sev-accent); }
+  #s-severity .sev-node-link{ stroke:var(--sev-rule); stroke-width:1; fill:none; transition:stroke 0.25s, stroke-width 0.25s; }
+  #s-severity .sev-node-link.is-hot{ stroke:var(--sev-accent); stroke-width:1.6; }
+  #s-severity .sev-leaf-circle{ fill:var(--sev-paper); stroke:var(--sev-ink-3); stroke-width:1; transition:fill 0.2s, stroke 0.2s; }
+  #s-severity .sev-leaf-group{ cursor:pointer; }
+  #s-severity .sev-leaf-group:hover .sev-leaf-circle, #s-severity .sev-leaf-group.is-hot .sev-leaf-circle{ fill:var(--sev-ink); stroke:var(--sev-ink); }
+  #s-severity .sev-leaf-group:hover .sev-leaf-id, #s-severity .sev-leaf-group.is-hot .sev-leaf-id{ fill:var(--sev-paper); }
+  #s-severity .sev-leaf-group:hover .sev-leaf-name, #s-severity .sev-leaf-group.is-hot .sev-leaf-name{ fill:var(--sev-ink); font-weight:500; }
+  #s-severity .sev-leaf-id{ font-family:'IBM Plex Mono', monospace; font-size:9px; fill:var(--sev-ink-2); text-anchor:middle; dominant-baseline:central; letter-spacing:0.04em; pointer-events:none; }
+  #s-severity .sev-leaf-name{ font-family:'IBM Plex Sans', sans-serif; font-size:11px; fill:var(--sev-ink-3); text-anchor:middle; pointer-events:none; }
+  #s-severity .sev-center-circle{}
+  #s-severity .sev-center-id, #s-severity .sev-center-name{ text-anchor:middle; pointer-events:none; fill:var(--sev-paper); }
+  #s-severity .sev-center-id{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; opacity:0.65; }
+  #s-severity .sev-center-name{ font-family:'Instrument Serif', Georgia, serif; font-size:17px; }
+  #s-severity .sev-center-sev{ font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; text-anchor:middle; pointer-events:none; fill:var(--sev-paper); opacity:0.55; }
+  #s-severity .sev-fade-in{ animation:sevFadeUp 0.5s 0.1s both ease-out; }
+  @keyframes sevFadeUp{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+  @media(max-width:980px){ #s-severity .sev-shell{ padding:32px 20px 60px; } #s-severity .sev-display{ font-size:44px; } #s-severity .sev-picker{ grid-template-columns:repeat(2,1fr); } #s-severity .sev-stage{ height:auto; } #s-severity .sev-panel{ position:relative; width:100%; height:auto; } #s-severity .sev-info{ left:0; } #s-severity .sev-graph{ left:0; margin-top:16px; transform:none; } #s-severity .sev-stage:not(.expanded) .sev-graph{ display:none; } }
+</style>
+</head>
+<body>
+
+<div class="page-bar">
+  <a href="index.html" class="back-btn">← Showcase</a>
+  <span class="page-bar-title">Severity Atlas · Attack Chain</span>
+</div>
+
+<div id="s-severity">
+  <div class="sev-shell">
+    <div id="severity-root"></div>
+  </div>
+</div>
+
+<script>
+const _SEV_TACTIC_FALLBACK = {"AI Model Access":"AML.TA0004","Command and Control":null,"Lateral Movement":null};
+const _SEV_LEVEL = {"Low":"low","Medium":"med","High":"high","Critical":"crit"};
+const _SEV_SHAPES = ["sev-shape-pill","sev-shape-hex","sev-shape-square","sev-shape-tag"];
+const _severity = { data:null, tacticIds:{}, current:null, expanded:false };
+
+function _sevEscape(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function _sevPad(n){ return n<10?'0'+n:''+n; }
+function _sevWrapText(str,maxChars,maxLines=3){ const words=String(str).split(/\s+/); const lines=[]; let cur=''; for(const w of words){ if((cur+' '+w).trim().length>maxChars){ if(cur)lines.push(cur); cur=w; }else{ cur=(cur+' '+w).trim(); } } if(cur)lines.push(cur); return lines.slice(0,maxLines); }
+
+async function init(){
+  const root=document.getElementById('severity-root');
+  root.innerHTML='<div class="sev-loading">Loading severity categories…</div>';
+  try{
+    const [sevR,ttpR]=await Promise.all([fetch('./data/severity_categories.json'),fetch('./data/atlas_ttp.json')]);
+    const sevJson=sevR.ok?await sevR.json():null;
+    const ttpJson=ttpR.ok?await ttpR.json():null;
+    _severity.data=Array.isArray(sevJson)?sevJson:(sevJson?.categories||[]);
+    const ids=Object.assign({},_SEV_TACTIC_FALLBACK);
+    if(ttpJson&&Array.isArray(ttpJson.tactics)){ for(const t of ttpJson.tactics){ if(t.name&&t.tacticId)ids[t.name]=t.tacticId; } }
+    _severity.tacticIds=ids;
+  }catch(e){
+    root.innerHTML=`<div class="sev-loading">Could not load <code>data/severity_categories.json</code>.<br>Add the file to the <code>/data/</code> folder and redeploy.<br><small style="opacity:0.6">${e.message}</small></div>`;
+    return;
+  }
+  if(!_severity.data?.length){ root.innerHTML='<div class="sev-loading">No categories found in data file.</div>'; return; }
+  _render();
+  _select(1);
+}
+
+function _render(){
+  const data=_severity.data;
+  const tiles=data.map(cat=>{ const lvl=_SEV_LEVEL[cat.severity]||'med'; return`<button class="sev-tile" data-id="${cat.category_id}"><div><div class="sev-tile-id">Cat · ${_sevPad(cat.category_id)}</div><span class="sev-mark sev-${lvl}"><span class="sev-swatch"></span>${_sevEscape(cat.severity)}</span></div><div class="sev-tile-corner">${cat.category_id}</div><div><div class="sev-tile-title">${_sevEscape(cat.what_category_is_this)}</div><div class="sev-tile-sub">${cat.tactics.length} tactics · ${_sevEscape((cat.title||'').split(' - ')[0])}</div></div></button>`; }).join('');
+  document.getElementById('severity-root').innerHTML=`
+    <div class="sev-topbar">
+      <div class="sev-brandmark"><span class="sev-dot"></span><span class="sev-label">AI/LLM Threat Library · Severity Atlas</span></div>
+      <div class="sev-crumbs"><span>Library</span><span class="sev-sep">/</span><span>Severity</span><span class="sev-sep">/</span><span class="sev-now">Categories</span></div>
+    </div>
+    <header class="sev-title-block">
+      <div>
+        <h1 class="sev-display">Four bands of <em>severity</em>.</h1>
+        <p class="sev-lede">Threats are graded by where they sit in the attack chain. Each severity band is defined by a specific set of MITRE ATLAS tactics — pick a band to read its rationale and trace the tactics that define it.</p>
+      </div>
+      <div class="sev-meta"><span class="sev-num">${_sevPad(data.length)}</span>Categories<br><span style="color:var(--sev-ink-4)">Mapped to ATLAS v4.0</span></div>
+    </header>
+    <div class="sev-step-head"><span class="sev-step-num">Step 01</span><span class="sev-step-title">Pick a severity category</span><span class="sev-step-hint">${data.length} available · low → critical</span></div>
+    <div class="sev-picker" id="sev-picker">${tiles}</div>
+    <div class="sev-step-head"><span class="sev-step-num">Step 02</span><span class="sev-step-title">Review the info card</span><span class="sev-step-hint">Toggle tactics map to expand</span></div>
+    <div class="sev-stage" id="sev-stage">
+      <div class="sev-panel sev-info" id="sev-info-panel"><div class="sev-info-empty">Select a category to begin</div></div>
+      <div class="sev-panel sev-graph" id="sev-graph-panel"><div class="sev-graph-inner" id="sev-graph-inner"></div></div>
+    </div>`;
+  document.querySelectorAll('.sev-tile').forEach(btn=>btn.addEventListener('click',()=>_select(+btn.dataset.id)));
+}
+
+function _select(id){
+  if(_severity.current!==id){ _severity.expanded=false; document.getElementById('sev-stage')?.classList.remove('expanded'); }
+  _severity.current=id;
+  document.querySelectorAll('.sev-tile').forEach(t=>t.classList.toggle('active',+t.dataset.id===id));
+  const cat=_severity.data.find(c=>c.category_id===id); if(!cat)return;
+  _renderInfo(cat); _renderGraph(cat);
+}
+
+function _renderInfo(cat){
+  const lvl=_SEV_LEVEL[cat.severity]||'med';
+  const shortName=cat.what_category_is_this;
+  const total=_severity.data.length;
+  const tacticsRow=(cat.tactics||[]).map((tname,i)=>{ const tid=_severity.tacticIds[tname]; const shape=_SEV_SHAPES[i%_SEV_SHAPES.length]; const idHtml=tid?`<span class="sev-t-id">${_sevEscape(tid.replace('AML.',''))}</span>`:`<span class="sev-t-id sev-t-id-none">no ID</span>`; return`<span class="sev-tactic-shape ${shape}">${idHtml}<span class="sev-t-name">${_sevEscape(tname)}</span></span>`; }).join('');
+  const why=(cat.why_this_severity||[]).map(p=>`<li>${_sevEscape(p)}</li>`).join('');
+  const titleStr=cat.title||''; const[prefix,suffix]=titleStr.includes(' - ')?titleStr.split(' - '):[titleStr,''];
+  document.getElementById('sev-info-panel').innerHTML=`
+    <div class="sev-info-inner sev-fade-in">
+      <div class="sev-info-head">
+        <div class="sev-info-eyebrow">
+          <span class="sev-pill"><span class="sev-pdot"></span>Category ${_sevPad(cat.category_id)} of ${_sevPad(total)}</span>
+          <span class="sev-pill" style="background:transparent;">${cat.tactics.length} tactics</span>
+          <span class="sev-chip sev-${lvl}"><span class="sev-chip-swatch"></span>${_sevEscape(cat.severity)}</span>
+        </div>
+        <h2 class="sev-info-title">${_sevEscape(prefix)}${suffix?` — <em style="font-style:italic;">${_sevEscape(suffix)}</em>`:''}</h2>
+        <p class="sev-info-blurb">A <strong>${_sevEscape(cat.severity.toLowerCase())}</strong>-severity band defined by <strong>${cat.tactics.length}</strong> ATLAS tactic${cat.tactics.length===1?'':'s'} at the <strong>${_sevEscape(shortName.toLowerCase())}</strong> stage of the attack chain.</p>
+      </div>
+      <div class="sev-info-body">
+        <div class="sev-section"><div class="sev-sec-label">Tactics in this band</div><div class="sev-tactic-row">${tacticsRow}</div></div>
+        <div class="sev-section"><div class="sev-sec-label">Definition</div><h3 class="sev-sec-h">How tactics define <em>${_sevEscape(shortName)}</em></h3><div class="sev-sec-body"><p>${_sevEscape(cat.how_tactics_define_category||'')}</p></div></div>
+        <div class="sev-section"><div class="sev-sec-label">Grade</div><div class="sev-row"><h3 class="sev-sec-h" style="margin:0;">Severity</h3><span class="sev-chip sev-${lvl}"><span class="sev-chip-swatch"></span>${_sevEscape(cat.severity)}</span></div></div>
+        <div class="sev-section"><div class="sev-sec-label">Why this severity</div><div class="sev-sec-body"><ul class="sev-bullets">${why}</ul></div></div>
+      </div>
+      <div class="sev-info-foot">
+        <div class="sev-meta-line">ID · SEV-${_sevPad(cat.category_id)} · ${cat.tactics.length} linked tactics</div>
+        <button class="sev-btn-toggle" id="sev-btn-toggle">
+          <span class="sev-label-text">${_severity.expanded?'Hide tactics map':'Show tactics map'}</span>
+          <span class="sev-count">${cat.tactics.length}</span><span class="sev-arrow">→</span>
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('sev-btn-toggle').addEventListener('click',()=>{ _severity.expanded=document.getElementById('sev-stage').classList.toggle('expanded'); const btn=document.getElementById('sev-btn-toggle'); if(btn)btn.querySelector('.sev-label-text').textContent=_severity.expanded?'Hide tactics map':'Show tactics map'; });
+}
+
+function _renderGraph(cat){
+  const W=560,H=460,cx=W/2,cy=H/2-10;
+  const items=(cat.tactics||[]).map(name=>({name,id:_severity.tacticIds[name]||null}));
+  const n=items.length, lvl=_SEV_LEVEL[cat.severity]||'med';
+  const baseR=Math.min(W,H)*0.36;
+  const nodes=items.map((m,i)=>{ const ang=-Math.PI/2+(i*2*Math.PI/Math.max(n,1)); return{...m,x:cx+Math.cos(ang)*baseR,y:cy+Math.sin(ang)*baseR,idx:i}; });
+  const links=nodes.map(node=>`<line class="sev-node-link" data-idx="${node.idx}" x1="${cx}" y1="${cy}" x2="${node.x}" y2="${node.y}"/>`).join('');
+  const leaves=nodes.map(node=>{ const idText=node.id?node.id.replace('AML.',''):'—'; const nameLines=_sevWrapText(node.name,18,3); const nameY=node.y+38; const tspans=nameLines.map((l,i)=>`<tspan x="${node.x}" dy="${i===0?0:13}">${_sevEscape(l)}</tspan>`).join(''); return`<g class="sev-leaf-group" data-idx="${node.idx}"><circle class="sev-leaf-circle" cx="${node.x}" cy="${node.y}" r="26"/><text class="sev-leaf-id" x="${node.x}" y="${node.y}">${_sevEscape(idText)}</text><text class="sev-leaf-name" y="${nameY}">${tspans}</text></g>`; }).join('');
+  const shortName=cat.what_category_is_this;
+  const centerName=_sevWrapText(shortName,14,2).map((l,i)=>`<tspan x="${cx}" dy="${i===0?0:19}">${_sevEscape(l)}</tspan>`).join('');
+  const sevColor=`var(--sev-${lvl}-color)`;
+  document.getElementById('sev-graph-inner').innerHTML=`
+    <div class="sev-graph-head sev-fade-in">
+      <div class="sev-graph-eyebrow">Severity → tactics · radial map</div>
+      <h2 class="sev-graph-title">${_sevEscape(cat.title||'')}</h2>
+      <div class="sev-graph-sub">${n} ATLAS tactic${n===1?'':'s'} radiate from this severity band.</div>
+    </div>
+    <div class="sev-radial-wrap sev-fade-in">
+      <svg class="sev-radial-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+        <defs><pattern id="sev-dg-${cat.category_id}" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.6" fill="#cfc7b3"/></pattern></defs>
+        <rect x="0" y="0" width="${W}" height="${H}" fill="url(#sev-dg-${cat.category_id})" opacity="0.5"/>
+        <circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="var(--sev-rule)" stroke-dasharray="2 4"/>
+        ${links}
+        <g><circle class="sev-center-circle" cx="${cx}" cy="${cy}" r="56" fill="${sevColor}" stroke="${sevColor}"/><text class="sev-center-id" x="${cx}" y="${cy-22}">CAT · ${_sevPad(cat.category_id)}</text><text class="sev-center-name" x="${cx}" y="${cy-2}">${centerName}</text><text class="sev-center-sev" x="${cx}" y="${cy+30}">${_sevEscape(cat.severity)}</text></g>
+        ${leaves}
+      </svg>
+    </div>
+    <div class="sev-tactic-list"><h4>Tactics index</h4><ol>${items.map((m,i)=>`<li data-idx="${i}"><span class="sev-tid ${m.id?'':'sev-tid-none'}">${m.id?_sevEscape(m.id):'no ID'}</span><span class="sev-tname">${_sevEscape(m.name)}</span></li>`).join('')}</ol></div>`;
+  const inner=document.getElementById('sev-graph-inner');
+  const linkEls=inner.querySelectorAll('.sev-node-link'); const leafEls=inner.querySelectorAll('.sev-leaf-group'); const listEls=inner.querySelectorAll('.sev-tactic-list li');
+  function setHot(idx,on){ if(idx==null)return; linkEls[idx]?.classList.toggle('is-hot',on); leafEls[idx]?.classList.toggle('is-hot',on); if(listEls[idx])listEls[idx].style.background=on?'rgba(0,0,0,0.04)':''; }
+  leafEls.forEach((el,i)=>{ el.addEventListener('mouseenter',()=>setHot(i,true)); el.addEventListener('mouseleave',()=>setHot(i,false)); });
+  listEls.forEach((el,i)=>{ el.addEventListener('mouseenter',()=>setHot(i,true)); el.addEventListener('mouseleave',()=>setHot(i,false)); });
+}
+
+init();
+</script>
+</body>
+</html>

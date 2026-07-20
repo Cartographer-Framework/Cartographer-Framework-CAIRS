@@ -1,0 +1,204 @@
+[
+  {
+    "remediation_id": 1,
+    "title": "System Monitoring Remediations",
+    "what_are_these_remediations": "System Monitoring Remediations are remedial measures targeting the underlying monitoring systems which operate when the AI/LLM System is running.",
+    "why_remediate": [
+      "System Monitoring processes are the first layer of defense in regard to mitigating threats.",
+      "Many threats within this category are low level threats and prevented by controls on the system running the AI/LLM itself."
+    ],
+    "how_to_remediate": [
+      "The majority of the threats that can be mitigated by this category are generally rectified by placing a WAF or host-level control which analyzes the contents of data travelling in or out of a given network infrastructure.",
+      "The utilization of a logging system generally facilitates remediation for threats relevant to this category as well."
+    ],
+    "remediation_difficulty": "Low — mitigation efforts are generally implementations to existing systems with already existing solutions, providing a benefit to engineers.",
+    "associated_mitigations": [
+      {
+        "id": "AML.M0024",
+        "name": "AI Telemetry Logging"
+      },
+      {
+        "id": "AML.M0025",
+        "name": "Maintain AI Dataset Provenance"
+      },
+      {
+        "id": "AML.M0016",
+        "name": "Vulnerability Scanning"
+      },
+      {
+        "id": "AML.M0000",
+        "name": "Limit Public Release of Information"
+      },
+      {
+        "id": "AML.M0001",
+        "name": "Limit Model Artifact Release"
+      },
+      {
+        "id": "AML.M0019",
+        "name": "Control Access to AI Models and Data in Production"
+      }
+    ]
+  },
+  {
+    "remediation_id": 2,
+    "title": "Model Hardening Remediations",
+    "what_are_these_remediations": "Model Hardening Remediations consist of efforts which intend to improve model outputs by adjusting the internal model configurations, modelfile level parameters, or request schema of a given model used.",
+    "why_remediate": [
+      "This is a Defense in Depth solution.",
+      "This remediation effort improves the general output for your model pertinent to its use case."
+    ],
+    "how_to_remediate": [
+      "These efforts revolve around editing the native configurations that are possible with any given model.",
+      "We can adjust internal parameters for open source models such as top_k, temperature, grammar roots, and internal system prompt."
+    ],
+    "remediation_difficulty": "Low to Medium — time spent can range from as little as editing a modelfile or API request structure, to as much as generating or distilling a completely new model. Testing must occur to rectify issues within this category.",
+    "associated_mitigations": [
+      {
+        "id": "AML.M0020",
+        "name": "Generative AI Guardrails"
+      },
+      {
+        "id": "AML.M0021",
+        "name": "Generative AI Guidelines"
+      },
+      {
+        "id": "AML.M0022",
+        "name": "Generative AI Model Alignment"
+      },
+      {
+        "id": null,
+        "name": "Memory Hardening"
+      },
+      {
+        "id": "AML.M0003",
+        "name": "Model Hardening"
+      },
+      {
+        "id": "AML.M0008",
+        "name": "Validate AI Model"
+      },
+      {
+        "id": "AML.M0017",
+        "name": "AI Model Distribution Methods"
+      }
+    ]
+  },
+  {
+    "remediation_id": 3,
+    "title": "Input Sanitization Remediations",
+    "what_are_these_remediations": "Input Sanitization remediation efforts are those which occur for threats that exist against input receiving processes on a given AI/LLM powered system. These efforts consist of actions taken to prevent the abuse of a model from malicious requests intending to gain extraneous access to possible capabilities regarding your system.",
+    "why_remediate": [
+      "These mitigation methods serve to prevent the progression of an attacker through attack chain stages, generally to a degree which prevents known flaws from becoming vulnerabilities."
+    ],
+    "how_to_remediate": [
+      "These mitigation methods are easy to implement, are low in effort to plan, and prevent significant corruption and/or destruction of infrastructure associated with your assets.",
+      "If a model itself is found to permit an excessive amount of queries to an endpoint, implement a rate limit on the system.",
+      "Sanitize training data that is given to the model in pre-production.",
+      "Utilize input restoration to transform all inputs into safe versions of inputs for your AI/LLM powered machine.",
+      "Implement Proactive and Reactive Logging solutions monitoring endpoints which receive input."
+    ],
+    "remediation_difficulty": "Medium — time associated with remediations in this fault localization category are noticeable but not significant. Expect remediation timeframes similar to development timeframes for the affected process at hand.",
+    "associated_mitigations": [
+      {
+        "id": "AML.M0004",
+        "name": "Restrict Number of AI Model Queries"
+      },
+      {
+        "id": "AML.M0007",
+        "name": "Sanitize Training Data"
+      },
+      {
+        "id": "AML.M0010",
+        "name": "Input Restoration"
+      },
+      {
+        "id": "AML.M0013",
+        "name": "Code Signing"
+      },
+      {
+        "id": "AML.M0015",
+        "name": "Adversarial Input Detection"
+      },
+      {
+        "id": "AML.M0033",
+        "name": "Input and Output Validation for AI Agent Components"
+      }
+    ]
+  },
+  {
+    "remediation_id": 4,
+    "title": "Process Sanitization Remediations",
+    "what_are_these_remediations": "Process Sanitization is the act of sanitizing the data which is processed by a given AI/LLM System.",
+    "why_remediate": [
+      "For any possible processing that can occur on any given AI/LLM System, there should be a thorough understanding of exactly what is intended to occur and what is not intended to occur.",
+      "These mitigation efforts primarily rectify the issues which occur from attacks existing in the middle of the attack chain, implying a higher severity for threat IDs triggering mitigations for this category."
+    ],
+    "how_to_remediate": [
+      "If you permit the model access to only certain directories through allow/disallow lists, then the model can only traverse those directories regardless of what the user asks.",
+      "Sanitize the tools by which your model uses, for given contexts, by only allowing certain tools to be used by the model.",
+      "If an AI system utilizes an array of commands, its processes should be sanitized.",
+      "If an AI system utilizes a singular tool, that process should be sanitized.",
+      "If an AI system can read internal machine contents, that process itself should be sanitized."
+    ],
+    "remediation_difficulty": "Medium — time associated with remediations in this fault localization category are noticeable but not significant. Expect remediation timeframes similar to development timeframes for the affected process at hand.",
+    "associated_mitigations": [
+      {
+        "id": "AML.M0026",
+        "name": "Privileged AI Agent Permissions Configuration"
+      },
+      {
+        "id": "AML.M0027",
+        "name": "Single-User AI Agent Permissions Configuration"
+      },
+      {
+        "id": null,
+        "name": "AI Agent Tools Permissions Configuration"
+      },
+      {
+        "id": null,
+        "name": "Restrict AI Agent Tool Invocation on Untrusted Data"
+      },
+      {
+        "id": "AML.M0029",
+        "name": "Human in the Loop"
+      },
+      {
+        "id": "AML.M0032",
+        "name": "Segmentation of AI Agents and Components"
+      },
+      {
+        "id": "AML.M0006",
+        "name": "Use Ensemble Methods"
+      }
+    ]
+  },
+  {
+    "remediation_id": 5,
+    "title": "Output Sanitization Remediations",
+    "what_are_these_remediations": "Output sanitization is the action of remediating processes associated with data output on a given AI/LLM System.",
+    "why_remediate": [
+      "Output created by a model triggered by a user is output which is created and presented by an autonomous machine — in the context of security, it is not inherently safe or inert.",
+      "Most forms of compromise that require output sanitization efforts imply that Access Gain is possible; the tactics utilized here generally have progressed to a state in which a prompt creates a malicious output."
+    ],
+    "how_to_remediate": [
+      "The execution of code, malicious or not, can be avoided by transmuting the content into a data string that cannot be interpreted by any machine.",
+      "Disallow the rendering of output referring to sensitive directories during reasoning or thinking stages of interactions.",
+      "Require that output tokens from the AI/LLM Model are converted to an inert state before being presented on any application and before being transported across a network, internal or external."
+    ],
+    "remediation_difficulty": "Medium — time associated with remediations in this fault localization category are noticeable but not significant. Expect remediation timeframes similar to development timeframes for the affected process at hand.",
+    "associated_mitigations": [
+      {
+        "id": "AML.M0014",
+        "name": "Verify AI Artifacts"
+      },
+      {
+        "id": "AML.M0002",
+        "name": "Passive AI Output Obfuscation"
+      },
+      {
+        "id": "AML.M0033",
+        "name": "Input and Output Validation for AI Agent Components"
+      }
+    ]
+  }
+]
