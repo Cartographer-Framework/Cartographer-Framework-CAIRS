@@ -1,0 +1,194 @@
+[
+  {
+    "id": "AML.TA0000",
+    "title": "AI Model Access",
+    "adversary_attempting": "The adversary is attempting to gain some level of access to an AI model.",
+    "how_question": {
+      "prompt": "How do attempts at gaining AI Model Access facilitate the compromise of your AI Model/System?",
+      "description": [
+        "When attempting to gain AI Model Access, a hacker can identify surfaces relevant to the underlying infrastructure of your model."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0001",
+    "title": "AI Attack Staging",
+    "adversary_attempting": "The adversary is leveraging their knowledge of and access to the target system to tailor the attack.",
+    "how_question": {
+      "prompt": "How do attempts at AI Attack Staging facilitate the compromise of your AI Model/System?",
+      "description": [
+        "This stage of the attack process leverages information gathered from the stage AML.TA0000, AI Model Access, in a manner that is actionable.",
+        "The information that one associates with their AI/LLM Model be it server type, application choice, or network configuration, could lead an adversary into developing payloads with greater effect than if they were deprived of the information from that stage."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0002",
+    "title": "Reconnaissance",
+    "adversary_attempting": "The adversary is trying to gather information about the AI system they can use to plan future operations.",
+    "how_question": {
+      "prompt": "How do attempts at Reconnaissance facilitate the compromise of your AI Model/System?",
+      "description": [
+        "These methods might include sub-domain hunting, API Endpoint Probing, Admin Endpoint Probing, NMAP Service Scan Probing, and Security Dimension Probing.",
+        "These methods directly contact or communicate with the model or the underlying network.",
+        "These methods facilitate the ability to further attacks from reconnaissance to initial access."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0003",
+    "title": "Resource Development",
+    "adversary_attempting": "The adversary is trying to establish resources they can use to support operations.",
+    "how_question": {
+      "prompt": "How do attempts at Resource Development facilitate the compromise of your AI Model/System?",
+      "description": [
+        "Attacks on low-hanging fruit in this case would be an adversary attempting to find information on your data from side-channels like Hacking Forums, the dark web, web archives, or exposed supply chains such as Github or web documents.",
+        "This would be a means of resource development as the information which could be gathered may very well uncover a direct path to compromising your model."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0004",
+    "title": "Initial Access",
+    "adversary_attempting": "The adversary is trying to gain access to the AI system.",
+    "how_question": {
+      "prompt": "How do attempts at Initial Access facilitate the compromise of your AI Model/System?",
+      "description": [
+        "Attempts at initial access facilitate the compromise of an AI/LLM System by identifying the channels and methods present in the system that are vulnerable to compromise.",
+        "Initial Access begins the process of penetrating the target system by testing its apparatus with varied payloads and methods that are synonymous with compromise."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0005",
+    "title": "Execution",
+    "adversary_attempting": "The adversary is trying to run malicious code embedded in AI artifacts or software.",
+    "how_question": {
+      "prompt": "How do attempts at Execution facilitate the compromise of your AI Model/System?",
+      "description": [
+        "Some models are directly prepared to execute code, and execute actions, for their underlying system.",
+        "Identifying the ability of code execution, and leveraging it, can further lateral or vertical movement before or after initial access is gained."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0006",
+    "title": "Persistence",
+    "adversary_attempting": "The adversary is trying to maintain their foothold via AI artifacts or software.",
+    "how_question": {
+      "prompt": "How do attempts at Persistence facilitate the compromise of your AI Model/System?",
+      "description": [
+        "In this stage adversaries identify their previous steps and its content, then test which payloads provide consistency in its rate of compromise.",
+        "In this stage, an attacker would likely be repeating payloads that immediately divulge prohibited information in a manner that is referred to as one-shotted."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0007",
+    "title": "Defense Evasion",
+    "adversary_attempting": "The adversary is trying to avoid being detected by AI-enabled security software.",
+    "how_question": {
+      "prompt": "How do attempts at Defense Evasion facilitate the compromise of your AI Model/System?",
+      "description": [
+        "Many models hold their own unique security methods which may or may not be bypassable, henceforth it is critical to understand that hackers will attempt to compromise your system in approaches that focus on evading defenses."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0008",
+    "title": "Discovery",
+    "adversary_attempting": "The adversary is trying to figure out your AI environment.",
+    "how_question": {
+      "prompt": "How do attempts at Discovery facilitate the compromise of your AI Model/System?",
+      "description": [
+        "Discovery is a Post-Exploitation tactic in which you will be utilizing the AI/LLM System to a degree in which the model facilitates the extraction of information on the target system per your means of compromise."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0009",
+    "title": "Collection",
+    "adversary_attempting": "The adversary is trying to gather AI artifacts and other related information relevant to their goal.",
+    "how_question": {
+      "prompt": "How do attempts at Collection facilitate the compromise of your AI Model/System?",
+      "description": [
+        "This tactic is categorized by adversaries attempting to collect information directly related to the model that is running on your given system and that model alone. This ranges from artifact collection to RAG Database extraction.",
+        "Both of these item types are useful to an adversary as it depicts the internal operating schemas that power your model.",
+        "Many items that are produced as AI Artifacts are commonly produced in a manner which divulges extraneous or excessive information, thus furthering the efforts of an adversary."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0010",
+    "title": "Exfiltration",
+    "adversary_attempting": "The adversary is trying to steal AI artifacts or other information about the AI system.",
+    "how_question": {
+      "prompt": "How do attempts at Exfiltration facilitate the compromise of your AI Model/System?",
+      "description": [
+        "This tactic is categorized as the action of extracting information directly relevant to the efforts occurring in the Collection stage.",
+        "This tactic is merely retrieving information deemed useful for exploitation in the aforementioned stage."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0011",
+    "title": "Impact",
+    "adversary_attempting": "The adversary is trying to manipulate, interrupt, erode confidence in, or destroy your AI systems and data.",
+    "how_question": {
+      "prompt": "How do attempts at Impact facilitate the compromise of your AI Model/System?",
+      "description": [
+        "AI Models themselves are capable of holding memory.",
+        "This ability to hold memory has opened up curiosity for attack type variants strictly occurring in high context load conditions.",
+        "Your job is to identify the state conditions which degrade or erode the model integrity in the face of a malicious request."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0012",
+    "title": "Privilege Escalation",
+    "adversary_attempting": "The adversary is trying to gain higher-level permissions.",
+    "how_question": {
+      "prompt": "How do attempts at Privilege Escalation facilitate the compromise of your AI Model/System?",
+      "description": [
+        "This tactic focuses on utilizing the AI Model to vertically escalate privileges after initial access has been granted.",
+        "This stage benefits adversaries by facilitating compromise to a degree which can alter the privileges of a given user through the attack surfaces on your AI/LLM System."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0013",
+    "title": "Credential Access",
+    "adversary_attempting": "The adversary is trying to steal account names and passwords.",
+    "how_question": {
+      "prompt": "How do attempts at Credential Access facilitate the compromise of your AI Model/System?",
+      "description": [
+        "At this stage, the adversary has successfully completed objectives relevant to other aforementioned tactic types and is nearing the end of the attack chain.",
+        "This implies that as a hacker, your goal here is to finalize the engagement by collecting all available credentials on the machine compromised."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0014",
+    "title": "Command and Control",
+    "adversary_attempting": "The adversary is trying to communicate with compromised AI systems to control them.",
+    "how_question": {
+      "prompt": "How do attempts at Command and Control facilitate the compromise of your AI Model/System?",
+      "description": [
+        "In this stage, the adversary has not only compromised your system to the degree of which they hold access to it, but now they hold complete control.",
+        "This stage is categorized as a complete takeover occurring by the adversary per any of the aforementioned tactics."
+      ]
+    }
+  },
+  {
+    "id": "AML.TA0015",
+    "title": "Lateral Movement",
+    "adversary_attempting": "The adversary is trying to move through your AI environment.",
+    "how_question": {
+      "prompt": "How do attempts at Lateral Movement facilitate the compromise of your AI Model/System?",
+      "description": [
+        "In this stage, the adversary has compromised your system to the degree that they are able to enumerate internal pathways, users, or relevant information necessary to compromise other systems within your infrastructure.",
+        "It is expected that compromise at this stage implies the success of earlier tactic objectives such as Execution, Persistence, Privilege Escalation, and C2."
+      ]
+    }
+  }
+]
